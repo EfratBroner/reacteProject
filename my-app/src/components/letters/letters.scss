@@ -1,0 +1,25 @@
+button {
+    width: 35px;
+    height: 35px;
+    font-size: 14px;
+
+    margin: 3px;
+
+    background-color: #fff;
+    border: 1px solid #333;
+    border-radius: 6px;
+
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.05);
+}
+
+div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+}

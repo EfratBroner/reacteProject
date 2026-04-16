@@ -13,18 +13,22 @@ export default function Game() {
     setIsXTurn(!isXTurn);
     setBoard(newBoard);
     if (calculateWinner(newBoard)) {
-      alert(`Player ${isXTurn ? "X" : "O"} wins!`);
-      setRound(1);
-      setBoard(Array(9).fill(null));
+      setTimeout(() => {
+        alert(`Player ${isXTurn ? "X" : "O"} wins!`);
+        setRound(1);
+        setBoard(Array(9).fill(null));
+      }, 100);
     } 
     else if (newBoard.every(cell => cell !== null)) {
-      alert("It's a tie!");
-      if (round == 3) {
-        alert("Game Over")
-        return
-      }
-      setRound(round + 1);
-      setBoard(Array(9).fill(null));
+      setTimeout(() => {
+        alert("It's a tie!");
+        if (round == 3) {
+          alert("Game Over")
+          return
+        }
+        setRound(round + 1);
+        setBoard(Array(9).fill(null));
+      }, 100);
     }
   }
 
@@ -49,11 +53,11 @@ export default function Game() {
   }
 
   return (
-    <div>
-      <h2>Round: {round}</h2>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 60px)" }}>
+    <div className="wrapper">
+      <h2 className="title">Round: {round}</h2>
+      <div className="board">
         {board.map((cell, index) => (
-          <button key={index} onClick={() => handleClick(index)} style={{ height: "30px" }}>
+          <button key={index} className="cell" onClick={() => handleClick(index)}>
             {cell}
           </button>
         ))}

@@ -1,12 +1,11 @@
 import './App.scss'
-import KeyBoard from './components/keyboard/keyboard'
+import Game from './components/circleAx/circleAx'
+import Main from './components/main/main'
 
 function App() {
-
   return (
     <>
-    {/* <Game></Game> */}
-    <KeyBoard></KeyBoard>
+    <Game></Game>
     </>
   )
 }

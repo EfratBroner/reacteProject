@@ -8,5 +8,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.8",
+    "formik": "^2.4.9",
+    "react-bootstrap": "^2.10.10",
+    "yup": "^1.7.1"
   }
 }

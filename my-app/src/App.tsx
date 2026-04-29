@@ -1,11 +1,11 @@
 import './App.scss'
-import Game from './components/circleAx/circleAx'
-import Main from './components/main/main'
+import Guests from './components/form/form'
 
 function App() {
   return (
     <>
-    <Game></Game>
+    {/* <Game></Game> */}
+    <Guests></Guests>
     </>
   )
 }

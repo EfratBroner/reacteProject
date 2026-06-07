@@ -7,16 +7,9 @@ import type { Volunteer } from '../../models/volunteer.model'
 
 interface RegisterProps {}
 
-// const Register: FC<RegisterProps> = () => (
-//   <div className="Register">
-//     Register Component
-//   </div>
-// );
-
 export default function Register(){
   const [volunteers, setVolunteers] = useState<Volunteer[]>([])
   const [email, setEmail] = useState("")
-  // const [password, setPassword] = useState("")
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [phone, setPhone] = useState("")
@@ -46,7 +39,6 @@ export default function Register(){
               email,
               phone,
               specialties: specialties.split(',')
-              // password
           })
           console.log(response)
           alert("המתנדב נרשם בהצלחה")
@@ -69,7 +61,6 @@ export default function Register(){
               <input type="text" placeholder='Email' onChange={(e)=>setEmail(e.target.value)}/><br/>
               <input type="text" placeholder='Phone' onChange={(e)=>setPhone(e.target.value)}/><br/>
               <input type="text" placeholder='Specialties (comma separated)' onChange={(e)=>setSpecialties(e.target.value)}/><br/>
-              {/* <input type="password" placeholder='Password' onChange={(e)=>setPassword(e.target.value)}/><br/> */}
               <button type='submit'>Register</button>
           </form>
       </div>

@@ -1,7 +1,9 @@
 export interface Volunteer {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  specialties: string[]; 
+    _id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    phone: string;
+    specialties: string[];
 }

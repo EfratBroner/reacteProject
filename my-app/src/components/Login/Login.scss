@@ -1,1 +1,11 @@
-.Login {}
+.login {
+    .forgot-password {
+        font-size: 0.75rem;
+        color: gray;
+        cursor: pointer;
+        &:hover {
+            color: darkgray;
+            text-decoration: underline;
+        }
+    }
+}

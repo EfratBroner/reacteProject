@@ -10,42 +10,69 @@ interface NavbarProps { }
 const Navbar: FC<NavbarProps> = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
-  const [volunteers, setVolunteers] = useState<Volunteer[]>([])
-  const [showName, setShowName] = useState(false)
+  const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
   const [userPassword, setUserPassword] = useState<string>("");
   const [volunteer, setVolunteer] = useState<Volunteer | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await api.get('/volunteer')
-      setVolunteers(response.data as Volunteer[])
-    }
-    fetchData()
-  }, [])
+      try {
+        const response = await api.get('/volunteer');
+        setVolunteers(response.data as Volunteer[]);
+      } catch (err) {
+        console.error("שגיאה בטעינת המתנדבים", err);
+      }
+    };
+    fetchData();
+  }, []);
 
-  const handleLoginSuccess = (password: string) => {
+  const handleLoginSuccess = async (password: string) => {
     setUserPassword(password);
-    console.log("הסיסמה שהתקבל באבא (Navbar):", password);
-    const found = volunteers.find(v => v.password === password);
-    setVolunteer(found ?? null);
+    console.log("הסיסמה שהתקבלה ב-Navbar:", password);
+
+    try {
+      const response = await api.get('/volunteer');
+      const updatedVolunteers = response.data as Volunteer[];
+      setVolunteers(updatedVolunteers);
+      const found = updatedVolunteers.find(v => v.password === password);
+      if (found) {
+        setVolunteer(found);
+        setShowLogin(false);
+        setShowRegister(false);
+      } else {
+        setVolunteer(null);
+      }
+    } catch (err) {
+      console.error("שגיאה בסנכרון הנתונים", err);
+    }
   };
+
+  const switchToRegister = () => {
+    setShowLogin(false);
+    setShowRegister(true);
+  };
+
+  const switchToLogin = () => {
+    setShowRegister(false);
+    setShowLogin(true);
+  };
+
   return (
-    <div>
-      <h1>מערכת מתנדבים:</h1>
-
-      {showName && <div className="gameArea">
-        <button onClick={() => setShowLogin(true)}>התחברות</button>
-        {showLogin && <Login onLoginSuccess={handleLoginSuccess} />}
-        <button onClick={() => setShowRegister(true)}>הרשמה</button>
-        {showRegister && <Register />}
-      </div>}
-
-      {!showName && <div>
-        <p>שלום!</p>
-        <button onClick={() => setShowName(true)}>{volunteer?.firstName}</button>
-      </div>}
-    </div>
+    <nav className="navbar">
+      <div className="navbar__brand">🤝 מערכת מתנדבים</div>
+      <div className="navbar__actions">
+        {!volunteer ? (<>
+          <button className="navbar__btn navbar__btn--outline" onClick={() => { setShowLogin(true); setShowRegister(false); }}>התחברות</button>
+          <button className="navbar__btn navbar__btn--primary" onClick={() => { setShowRegister(true); setShowLogin(false); }}>הרשמה</button>
+        </>) : (<>
+          <span className="navbar__greeting">שלום, {volunteer.firstName}! 👋</span>
+          <button className="navbar__btn navbar__btn--outline" onClick={() => setVolunteer(null)}>התנתק</button></>
+        )}
+      </div>
+      {showLogin && <Login onLoginSuccess={handleLoginSuccess} onNavigateToRegister={switchToRegister} onClose={() => setShowLogin(false)} />}
+      {showRegister && <Register onRegisterSuccess={handleLoginSuccess} onNavigateToLogin={switchToLogin} onClose={() => setShowRegister(false)} />}
+    </nav>
   );
-}
+};
 
 export default Navbar;

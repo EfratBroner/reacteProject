@@ -4,10 +4,13 @@ import { useState, useEffect } from "react";
 import api from '../../api'
 import type { Volunteer } from '../../models/volunteer.model'
 
+interface RegisterProps {
+  onRegisterSuccess: (password: string) => void;
+  onNavigateToLogin: () => void;
+  onClose: () => void;
+}
 
-interface RegisterProps { }
-
-export default function Register() {
+export default function Register({ onRegisterSuccess, onClose,onNavigateToLogin }: RegisterProps) {
   const [volunteers, setVolunteers] = useState<Volunteer[]>([])
   const [email, setEmail] = useState("")
   const [firstName, setFirstName] = useState("")
@@ -25,13 +28,15 @@ export default function Register() {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault()
+    
     for (let i = 0; i < volunteers.length; i++) {
       if (volunteers[i].email === email && volunteers[i].firstName === firstName && volunteers[i].lastName === lastName) {
-        alert("המתנדב קיים במערכת")
-        //להעביר לקומפוננטה של ההתחברות
+        alert("המתנדב קיים במערכת, מועבר לדף התחברות...");
+        onNavigateToLogin(); 
         return
       }
     }
+    
     try {
       const response = await api.post('/volunteer', {
         firstName,
@@ -40,33 +45,39 @@ export default function Register() {
         phone,
         specialties: specialties.split(',')
       })
+      
       console.log(response)
       alert("המתנדב נרשם בהצלחה")
+      const newVolunteer = response.data as Volunteer;
+
       setEmail('')
       setFirstName('')
       setLastName('')
       setPhone('')
       setSpecialties('')
-      //להעביר לקומפוננטה של דף הבית
+      
+      if (newVolunteer && newVolunteer.password) {
+        onRegisterSuccess(newVolunteer.password);
+      }
+
     } catch (error) {
       console.error(error)
     }
   }
+  
   return (
-    <div className='register'>
-      <form onSubmit={handleSubmit} >
-        <h2>Register</h2>
-        <input type="text" placeholder='First Name' onChange={(e) => setFirstName(e.target.value)} /><br />
-        <input type="text" placeholder='Last Name' onChange={(e) => setLastName(e.target.value)} /><br />
-        <input type="text" placeholder='Email' onChange={(e) => setEmail(e.target.value)} /><br />
-        <input type="text" placeholder='Phone' onChange={(e) => setPhone(e.target.value)} /><br />
-        <input type="text" placeholder='Specialties (comma separated)' onChange={(e) => setSpecialties(e.target.value)} /><br />
-        <button type='submit'>Register</button>
-      </form>
+    <div className='register-overlay' onClick={onClose}>
+      <div className='register-modal' onClick={e => e.stopPropagation()}>
+        <form onSubmit={handleSubmit}>
+          <h2>הרשמה</h2>
+          <input type="text" placeholder='שם פרטי' onChange={(e) => setFirstName(e.target.value)} />
+          <input type="text" placeholder='שם משפחה' onChange={(e) => setLastName(e.target.value)} />
+          <input type="text" placeholder='אימייל' onChange={(e) => setEmail(e.target.value)} />
+          <input type="text" placeholder='טלפון' onChange={(e) => setPhone(e.target.value)} />
+          <input type="text" placeholder='התמחויות (מופרדות בפסיקים)' onChange={(e) => setSpecialties(e.target.value)} />
+          <button type='submit' className='modal-submit'>הרשם</button>
+        </form>
+      </div>
     </div>
   )
 }
-
-
-
-

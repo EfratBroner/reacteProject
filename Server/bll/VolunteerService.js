@@ -36,6 +36,7 @@ class VolunteerService extends Service {
     async resetPassword(id, email) {
     try {
         const newPassword = numID++;
+        const volunteer = await this.repo.findById(id);
         await this.repo.updatePassword(id, newPassword); 
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -48,7 +49,7 @@ class VolunteerService extends Service {
             from: 'efrat0583228161@gmail.com',
             to: email, 
             subject: 'מערכת מתנדבים - סיסמה חדשה',
-            text: `שלום, הסיסמה החדשה שלך למערכת היא: ${newPassword}`
+            text: `שלום${volunteer}, הסיסמה החדשה שלך למערכת היא: ${newPassword}`
         };
         await transporter.sendMail(mailOptions);
 

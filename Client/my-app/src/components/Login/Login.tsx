@@ -5,68 +5,72 @@ import type { Volunteer } from '../../models/volunteer.model';
 import api from '../../api';
 import Register from '../Register/Register';
 
-interface LoginProps {}
+interface LoginProps {
+    onLoginSuccess: (password: string) => void;
+}
 
-export default function Login(){
+export default function Login({ onLoginSuccess }: LoginProps) {
     const [showRegister, setShowRegister] = useState(false);
     const [volunteers, setVolunteers] = useState<Volunteer[]>([])
-    const [email,setEmail]=useState("")
-    const [password,setPassword]=useState("")
-    const [error,setError]=useState("")
-    const [successMessage,setSuccessMessage]=useState("")
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [error, setError] = useState("")
+    const [successMessage, setSuccessMessage] = useState("")
 
 
-    const handleSubmit=(e:any)=>{
+    const handleSubmit = (e: any) => {
         e.preventDefault()
         const volunteer = volunteers.find(v => v.email === email)
-        if(!volunteer){
+        if (!volunteer) {
             setError("האימייל לא קיים במערכת")
             return
         }
-        if(volunteer.password !== password){
+        if (volunteer.password !== password) {
             setError("הסיסמא שגויה")
             return
         }
+
         setError("התחברות הצליחה")
         console.log("התחברות הצליחה", volunteer)
+        onLoginSuccess(volunteer.password);
     }
 
     const handleForgotPassword = async () => {
         const volunteer = volunteers.find(v => v.email === email);
-        
-        if (!volunteer) 
-          return;
+
+        if (!volunteer)
+            return;
         try {
             await api.post('/volunteer/forgot-password', {
                 id: volunteer._id,
                 email: volunteer.email
             });
             setSuccessMessage("סיסמה חדשה נשלחה לתיבת המייל שלך!");
-            setError(""); 
+            setError("");
         } catch (err) {
             setError("אירעה שגיאה בשליחת המייל, נסה שנית");
         }
     }
 
     useEffect(() => {
-    const fetchData = async () => {
-      const response = await api.get('/volunteer')
-      setVolunteers(response.data as Volunteer[])
-    }
-    fetchData()
-  }, [])
+        const fetchData = async () => {
+            const response = await api.get('/volunteer')
+            setVolunteers(response.data as Volunteer[])
+        }
+        fetchData()
+    }, [])
 
-    return(
+    return (
         <div className='login'>
             <form onSubmit={handleSubmit} >
                 <h2>התחברות</h2>
-                <input type="text" placeholder='email' onChange={(e)=>setEmail(e.target.value)}/><br></br>
-                <input type="password" placeholder='password' onChange={(e)=>setPassword(e.target.value)}/><br></br>
-                {error && <p style={{color:'red'}}>{error}</p>}
+                <input type="text" placeholder='email' onChange={(e) => setEmail(e.target.value)} /><br></br>
+                <input type="password" placeholder='password' onChange={(e) => setPassword(e.target.value)} /><br></br>
+                {error && <p style={{ color: 'red' }}>{error}</p>}
                 {error && error === "האימייל לא קיים במערכת" && <button onClick={() => setShowRegister(true)}>להרשמה</button>}
                 {showRegister && <Register />}
                 {error && error === "הסיסמא שגויה" && (
-                    <p className="forgot-password" style={{cursor: 'pointer', color: 'blue'}} onClick={handleForgotPassword}>
+                    <p className="forgot-password" style={{ cursor: 'pointer', color: 'blue' }} onClick={handleForgotPassword}>
                         שכחתי סיסמא
                     </p>
                 )}

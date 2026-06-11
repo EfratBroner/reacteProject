@@ -15,7 +15,7 @@ class VolunteerService extends Service {
             volunteer.password = volunteer._id
             volunteer.role = 'volunteer'
             return await this.repo.addVolunteer(volunteer)
-        } catch(err) {
+        } catch (err) {
             console.log(err)
             throw Error('error adding volunteer')
         }
@@ -27,39 +27,41 @@ class VolunteerService extends Service {
             delete data.password
             delete data.role
             return await this.repo.updateVolunteer(id, data)
-        } catch(err) {
+        } catch (err) {
             console.log(err)
             throw Error('error updating volunteer')
         }
     }
 
     async resetPassword(id, email) {
-    try {
-        const newPassword = numID++;
-        const volunteer = await this.repo.findById(id);
-        await this.repo.updatePassword(id, newPassword); 
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: 'efrat0583228161@gmail.com',       
-                pass: 'nfgr zzog vcgj pptm'        
-            }
-        });
-        const mailOptions = {
-            from: 'efrat0583228161@gmail.com',
-            to: email, 
-            subject: 'מערכת מתנדבים - סיסמה חדשה',
-            text: `שלום${volunteer}, הסיסמה החדשה שלך למערכת היא: ${newPassword}`
-        };
-        await transporter.sendMail(mailOptions);
+        try {
+            const newPassword = numID++;
+            console.log('id received:', id, 'email:', email);
+            const volunteer = await this.repo.byId(id);
+            console.log('volunteer found:', volunteer);
+            await this.repo.updatePassword(id, newPassword);
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: 'efrat0583228161@gmail.com',
+                    pass: 'nfgr zzog vcgj pptm'
+                }
+            });
+            const mailOptions = {
+                from: 'efrat0583228161@gmail.com',
+                to: email,
+                subject: 'מערכת מתנדבים - סיסמה חדשה',
+                text: `שלום${volunteer}, הסיסמה החדשה שלך למערכת היא: ${newPassword}`
+            };
+            await transporter.sendMail(mailOptions);
 
-        return { success: true, message: "הסיסמה שונתה והמייל נשלח" };
+            return { success: true, message: "הסיסמה שונתה והמייל נשלח" };
 
-    } catch (err) {
-        console.log(err);
-        throw Error('error resetting password');
+        } catch (err) {
+            console.log(err);
+            throw Error('error resetting password');
+        }
     }
-}
 }
 
 module.exports = new VolunteerService();

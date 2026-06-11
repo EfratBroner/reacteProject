@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 
 const volunteerSchema = new mongoose.Schema({
-    _id: Number,
     firstName: String,
     lastName: String,
     phone: String,
@@ -14,7 +13,9 @@ const volunteerSchema = new mongoose.Schema({
     },
     specialties: [String],
 }, {
-    collection: 'volunteers'
+    collection: 'volunteers',
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
 })
 
 const volunteer = mongoose.model('volunteers', volunteerSchema)

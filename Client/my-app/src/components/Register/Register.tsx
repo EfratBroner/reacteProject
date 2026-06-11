@@ -30,7 +30,7 @@ export default function Register({ onRegisterSuccess, onClose, onNavigateToLogin
     e.preventDefault()
 
     const exists = volunteers.some(
-      v => v.email === email && v.firstName === firstName && v.lastName === lastName
+      v => v.email === email
     )
 
     if (exists) {

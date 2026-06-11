@@ -25,18 +25,17 @@ class VolunteerController extends Controller {
     }
 
     async resetPassword(req, res, next) {
-    try {
-        const { id, email } = req.body; 
-        
-        // הדפסה לבדיקה בטרמינל של השרת
-        console.log("הנתונים שהתקבלו בשרת:", { id, email });
-
-        const result = await this.service.resetPassword(id, email);
-        return res.json(result);
-    } catch (e) {
-        next(e);
+        try {
+            const { id, email } = req.body;
+            console.log("הנתונים שהתקבלו בשרת:", { id, email });
+            const result = await this.service.resetPassword(id, email);
+            console.log(result);
+            
+            return res.json(result);
+        } catch (e) {
+            next(e);
+        }
     }
-}
 }
 
 module.exports = new VolunteerController();

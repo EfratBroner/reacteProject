@@ -4,12 +4,14 @@ import Login from '../Login/Login';
 import type { Volunteer } from '../../models/volunteer.model';
 import api from '../../api';
 import Register from '../Register/Register';
+import Profile from '../Profile/Profile';
 
 interface NavbarProps { }
 
 const Navbar: FC<NavbarProps> = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
   const [userPassword, setUserPassword] = useState<string>("");
   const [volunteer, setVolunteer] = useState<Volunteer | null>(null);
@@ -66,11 +68,13 @@ const Navbar: FC<NavbarProps> = () => {
           <button className="navbar__btn navbar__btn--primary" onClick={() => { setShowRegister(true); setShowLogin(false); }}>הרשמה</button>
         </>) : (<>
           <span className="navbar__greeting">שלום, {volunteer.firstName}! 👋</span>
+          <button className="navbar__btn navbar__btn--outline" onClick={() => setShowProfile(true)}>הפרופיל שלי</button>
           <button className="navbar__btn navbar__btn--outline" onClick={() => setVolunteer(null)}>התנתק</button></>
         )}
       </div>
       {showLogin && <Login onLoginSuccess={handleLoginSuccess} onNavigateToRegister={switchToRegister} onClose={() => setShowLogin(false)} />}
       {showRegister && <Register onRegisterSuccess={handleLoginSuccess} onNavigateToLogin={switchToLogin} onClose={() => setShowRegister(false)} />}
+      {showProfile && volunteer && <Profile volunteer={volunteer} onClose={() => setShowProfile(false)} />}
     </nav>
   );
 };

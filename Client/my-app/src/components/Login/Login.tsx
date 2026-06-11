@@ -39,6 +39,8 @@ export default function Login({ onLoginSuccess, onNavigateToRegister, onClose }:
 
     const handleForgotPassword = async () => {
         const volunteer = volunteers.find(v => v.email === email);
+            console.log(volunteer); // ← הוסף כאן
+
 
         if (!volunteer) return;
         try {

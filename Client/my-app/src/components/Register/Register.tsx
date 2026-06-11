@@ -10,7 +10,7 @@ interface RegisterProps {
   onClose: () => void;
 }
 
-export default function Register({ onRegisterSuccess, onClose,onNavigateToLogin }: RegisterProps) {
+export default function Register({ onRegisterSuccess, onClose, onNavigateToLogin }: RegisterProps) {
   const [volunteers, setVolunteers] = useState<Volunteer[]>([])
   const [email, setEmail] = useState("")
   const [firstName, setFirstName] = useState("")
@@ -28,15 +28,16 @@ export default function Register({ onRegisterSuccess, onClose,onNavigateToLogin 
 
   const handleSubmit = async (e: any) => {
     e.preventDefault()
-    
-    for (let i = 0; i < volunteers.length; i++) {
-      if (volunteers[i].email === email && volunteers[i].firstName === firstName && volunteers[i].lastName === lastName) {
-        alert("המתנדב קיים במערכת, מועבר לדף התחברות...");
-        onNavigateToLogin(); 
-        return
-      }
+
+    const exists = volunteers.some(
+      v => v.email === email && v.firstName === firstName && v.lastName === lastName
+    )
+
+    if (exists) {
+      alert("המתנדב קיים במערכת, מועבר לדף התחברות...");
+      onNavigateToLogin();
+      return;
     }
-    
     try {
       const response = await api.post('/volunteer', {
         firstName,
@@ -45,7 +46,7 @@ export default function Register({ onRegisterSuccess, onClose,onNavigateToLogin 
         phone,
         specialties: specialties.split(',')
       })
-      
+
       console.log(response)
       alert("המתנדב נרשם בהצלחה")
       const newVolunteer = response.data as Volunteer;
@@ -55,7 +56,7 @@ export default function Register({ onRegisterSuccess, onClose,onNavigateToLogin 
       setLastName('')
       setPhone('')
       setSpecialties('')
-      
+
       if (newVolunteer && newVolunteer.password) {
         onRegisterSuccess(newVolunteer.password);
       }
@@ -64,7 +65,7 @@ export default function Register({ onRegisterSuccess, onClose,onNavigateToLogin 
       console.error(error)
     }
   }
-  
+
   return (
     <div className='register-overlay' onClick={onClose}>
       <div className='register-modal' onClick={e => e.stopPropagation()}>

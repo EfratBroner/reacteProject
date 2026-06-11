@@ -51,7 +51,7 @@ class VolunteerService extends Service {
                 from: 'efrat0583228161@gmail.com',
                 to: email,
                 subject: 'מערכת מתנדבים - סיסמה חדשה',
-                text: `שלום${volunteer}, הסיסמה החדשה שלך למערכת היא: ${newPassword}`
+                text: `שלום${volunteer[0].firstName}, הסיסמה החדשה שלך למערכת היא: ${newPassword}`
             };
             await transporter.sendMail(mailOptions);
 

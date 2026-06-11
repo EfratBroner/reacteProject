@@ -10,9 +10,7 @@ const HelpRequestCard: FC<HelpRequestCardProps> = ({ request }) => {
   return (
     <div className='help-request-card'>
       <div className='card-header'>
-        <span className='priority'>{request.priority && typeof request.priority === 'object'
-    ? (request.priority as any).namePriority
-    : request.priority}</span>
+        <span className='priority'>{request.priority }</span>
         <span className='city'>{request.location.city}</span>
       </div>
       <p className='description'>{request.description}</p>

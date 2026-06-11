@@ -20,15 +20,13 @@ const helpRequestsSchema = new mongoose.Schema({
     numberOfPeopleStranded: Number,
 
     priority: {
-        _id: Number,
-        namePriority: {
-            type: String,
-            enum: ['קריטית', 'גבוהה', 'בינונית', 'נמוכה']
-        }
+        type: String,
+        enum: ['נמוכה', 'בינונית', 'גבוהה', 'קריטית'],
+        default: 'נמוכה'
     },
 
     volunteerId: {
-        type: Number,
+        type: String,
         default: null
     }
 }, {

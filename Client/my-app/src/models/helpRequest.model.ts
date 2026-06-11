@@ -3,9 +3,9 @@ export interface Location {
   details: string;
 }
 
-export interface Priority {
+export interface status {
   _id: number;
-  namePriority: string;
+  status: string;
 }
 
 export interface HelpRequest {
@@ -13,5 +13,7 @@ export interface HelpRequest {
   phone: string;
   numberOfPeopleStranded: number;
   location: Location;
-  priority: Priority;
+  priority: string;
+  status: status;
+  volunteerId: string;
 }

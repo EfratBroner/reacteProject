@@ -24,7 +24,7 @@ export default function Login({ onLoginSuccess, onNavigateToRegister, onClose }:
         if (!volunteer) {
             setError("האימייל לא קיים במערכת, מעביר להרשמה...");
             alert("האימייל לא קיים במערכת, מועבר לדף ההרשמה");
-            onNavigateToRegister(); // עכשיו זה יעבוד מצוין
+            onNavigateToRegister(); 
             return;
         }
         if (volunteer.password !== password) {
@@ -39,9 +39,6 @@ export default function Login({ onLoginSuccess, onNavigateToRegister, onClose }:
 
     const handleForgotPassword = async () => {
         const volunteer = volunteers.find(v => v.email === email);
-            console.log(volunteer); // ← הוסף כאן
-
-
         if (!volunteer) return;
         try {
             await api.post('/volunteer/forgot-password', {

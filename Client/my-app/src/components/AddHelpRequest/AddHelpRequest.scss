@@ -94,6 +94,15 @@
           min-height: 70px;
           resize: vertical;
         }
+
+       
+        .error-message {
+          color: #e74c3c;        
+          font-size: 12px;       
+          font-weight: 500;
+          margin-top: 2px;
+          animation: fadeIn 0.2s ease; 
+        }
       }
     }
 

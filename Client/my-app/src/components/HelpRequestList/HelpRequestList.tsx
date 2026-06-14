@@ -15,35 +15,39 @@ const HelpRequestList: FC<HelpRequestListProps> = ({ requests, onSelect }) => {
   const [selectedPriority, setSelectedPriority] = useState<string>('');
   const [selectedCity, setSelectedCity] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
-  const [filteredRequests, setFilteredRequests] = useState<HelpRequest[]>([]);
-  const [isFiltering, setIsFiltering] = useState<boolean>(false);
+  const [displayRequests, setDisplayRequests] = useState<HelpRequest[]>(requests);
 
   useEffect(() => {
-    if (!selectedStatus && !selectedPriority && !selectedCity) {
-      setFilteredRequests([]);
-      setIsFiltering(false);
+    setDisplayRequests(requests);
+  }, [requests]);
+
+  useEffect(() => {
+    if (!selectedStatus && !selectedPriority && !selectedCity.trim()) {
+      setDisplayRequests(requests.filter(req => matchesSearch(req)));
       return;
     }
-    setIsFiltering(true);
-    const fetchData = async () => {
+  
+    const timer = setTimeout(async () => {
       setLoading(true);
       try {
         const params = new URLSearchParams();
         if (selectedStatus) params.append('status', selectedStatus);
         if (selectedPriority) params.append('priority', selectedPriority);
-        if (selectedCity) params.append('city', selectedCity);
-        const { data } = await api.get(`/helpRequest/search?${params.toString()}`);
-        setFilteredRequests(data);
+        if (selectedCity.trim()) params.append('city', selectedCity.trim()); 
+  
+        const { data } = await api.get(`/helpRequest/search?${params.toString()}`);        
+        setDisplayRequests(data.filter((req: HelpRequest) => matchesSearch(req)));
       } catch (error) {
-        console.error("שגיאה במשיכת נתונים מהשרת:", error);
-      } finally { setLoading(false); }
-    };
-    fetchData();
-  }, [selectedStatus, selectedPriority, selectedCity]);
-
-  const baseRequests = isFiltering ? filteredRequests : requests;
-
-  const displayRequests = baseRequests.filter(req => {
+        console.error("שגיאה:", error);
+      } finally {
+        setLoading(false);
+      }
+    }, 300);
+  
+    return () => clearTimeout(timer);
+  }, [selectedStatus, selectedPriority, selectedCity, searchQuery, requests]);
+  
+  function matchesSearch(req: HelpRequest) {
     if (!searchQuery.trim()) return true;
     const query = searchQuery.toLowerCase();
     return (
@@ -53,12 +57,11 @@ const HelpRequestList: FC<HelpRequestListProps> = ({ requests, onSelect }) => {
       req.phone?.includes(query) ||
       req.priority?.toLowerCase().includes(query)
     );
-  });
+  }
 
   return (
     <div className="HelpRequestList">
       <div className="search-container">
-
         <select value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)} className="status-select">
           <option value="">כל הסטטוסים</option>
           <option value="ממתין">ממתין</option>
@@ -74,18 +77,17 @@ const HelpRequestList: FC<HelpRequestListProps> = ({ requests, onSelect }) => {
           <option value="קריטית">קריטית</option>
         </select>
 
-        <input
-          type="text"
-          placeholder="סנן לפי עיר..."
-          value={selectedCity}
-          onChange={(e) => setSelectedCity(e.target.value)}
+        <input 
+          type="text" 
+          placeholder="סנן לפי עיר..." 
+          value={selectedCity} 
+          onChange={(e) => setSelectedCity(e.target.value)} 
           className="city-input"
         />
       </div>
 
-      {/* הצגת מצב טעינה או את הרשימה המעודכנת */}
       {loading ? (
-        <div className="loading">טוען נתונים מהשרת...</div>
+        <div className="loading">טוען מהשרת...</div>
       ) : displayRequests.length === 0 ? (
         <div className="no-results">לא נמצאו בקשות מתאימות.</div>
       ) : (

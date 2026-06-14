@@ -10,7 +10,7 @@ class HelpRequestRepo extends Repository {
     async byStatus(status) {
         try {
             return await this.model.find({ status: status });
-        } catch(err) {
+        } catch (err) {
             console.log(err)
             throw Error('error getting list of data')
         }
@@ -19,7 +19,7 @@ class HelpRequestRepo extends Repository {
     async byPriority(priority) {
         try {
             return await this.model.find({ 'priority.namePriority': priority });
-        } catch(err) {
+        } catch (err) {
             console.log(err)
             throw Error('error getting list of data')
         }
@@ -28,7 +28,7 @@ class HelpRequestRepo extends Repository {
     async byLocation(location) {
         try {
             return await this.model.find({ 'location.city': location });
-        } catch(err) {
+        } catch (err) {
             console.log(err)
             throw Error('error getting list of data')
         }
@@ -36,15 +36,24 @@ class HelpRequestRepo extends Repository {
 
     async findAdvanced(filters) {
         try {
-            const { city, status, priority } = filters;
+            const { city, status, priority } = filters || {};
+
             let query = {};
-            if (city) query['location.city'] = city;
-            if (status) query.status = status;
-            if (priority) query['priority.namePriority'] = priority;
-         return await this.model.find(query);
-        } catch(err) {
-            console.log(err)
-            throw Error('error filtering data')
+
+            if (city) {
+                query['location.city'] = { $regex: city, $options: 'i' };
+            }
+
+            if (status) {
+                query.status = status;
+            }
+
+            if (priority) {
+                query.priority = priority;
+            }
+            return await this.model.find(query);
+        } catch (err) {
+            throw Error('error filtering data');
         }
     }
 
@@ -66,7 +75,7 @@ class HelpRequestRepo extends Repository {
                 { _id: idHelp },
                 { $set: { status: nextStatus, volunteerId: idVolunteer } }
             );
-        } catch(err) {
+        } catch (err) {
             console.log(err)
             throw Error('error updating the data')
         }
@@ -76,7 +85,7 @@ class HelpRequestRepo extends Repository {
         try {
             const last = await this.model.findOne().sort({ _id: -1 });
             return await this.model.create(helpRequest);
-        } catch(err) {
+        } catch (err) {
             console.log(err)
             throw Error('error adding help request')
         }
@@ -85,7 +94,7 @@ class HelpRequestRepo extends Repository {
     async updateHelpRequest(id, data) {
         try {
             return await this.model.updateOne({ _id: id }, { $set: data });
-        } catch(err) {
+        } catch (err) {
             console.log(err)
             throw Error('error updating help request')
         }
@@ -94,7 +103,7 @@ class HelpRequestRepo extends Repository {
     async deleteHelpRequest(id) {
         try {
             return await this.model.deleteOne({ _id: id });
-        } catch(err) {
+        } catch (err) {
             console.log(err)
             throw Error('error deleting help request')
         }

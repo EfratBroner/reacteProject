@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import './main.scss';
 import HelpRequestList from "../HelpRequestList/HelpRequestList";
-import HelpRequestDetails from "../HelpRequestDetails/HelpRequestDetails";
 import Navbar from "../Navbar/Navbar";
 import type { HelpRequest } from "../../models/helpRequest.model";
 import api from '../../api';
+import { useNavigate } from 'react-router-dom';
 
 export default function Main() {
     const [requests, setRequests] = useState<HelpRequest[]>([]);
-    const [selectedRequest, setSelectedRequest] = useState<HelpRequest | null>(null);
+    const navigate = useNavigate();
 
     const loadRequests = async () => {
         const response = await api.get('/helpRequest');
@@ -23,10 +23,7 @@ export default function Main() {
         <div>
            <Navbar onRefreshRequests={loadRequests} />
             <div className="main-content">
-                {selectedRequest
-                    ? <HelpRequestDetails request={selectedRequest} onBack={() => setSelectedRequest(null)} />
-                    : <HelpRequestList requests={requests} onSelect={setSelectedRequest} />
-                }
+                <HelpRequestList requests={requests} onSelect={(r) => navigate(`/details/${r._id}`, { state: { request: r } })} />
             </div>
         </div>
     )

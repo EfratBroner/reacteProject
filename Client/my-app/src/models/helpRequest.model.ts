@@ -9,6 +9,7 @@ export interface status {
 }
 
 export interface HelpRequest {
+  _id: string;
   description: string;
   phone: string;
   numberOfPeopleStranded: number;

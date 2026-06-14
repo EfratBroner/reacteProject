@@ -36,6 +36,15 @@ class VolunteerController extends Controller {
         }
     }
 
+    async getByEmail(req, res, next) {
+        try {
+            const result = await this.service.repo.findByEmail(req.params.email);
+            return res.json(result);
+        } catch (e) {
+            next(e);
+        }
+    }
+
     async findByEmail(req, res, next) {
         try {
             const { email, password } = req.body;

@@ -7,7 +7,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 interface RegisterProps {
-  onRegisterSuccess: (password: string) => void;
+  onRegisterSuccess: (volunteer: Volunteer) => void;
   onNavigateToLogin: () => void;
   onClose: () => void;
 }
@@ -79,15 +79,10 @@ export default function Register({ onRegisterSuccess, onClose, onNavigateToLogin
           specialties: values.specialties.split(',').map(s => s.trim())
         });
 
-        console.log(response);
-        alert("המתנדב נרשם בהצלחה");
-        const newVolunteer = response.data as Volunteer;
-
+        const newVolunteer = await api.get(`/volunteer/byEmail/${values.email}`).then(r => r.data);
         formik.resetForm();
-
-        if (newVolunteer && newVolunteer.password) {
-          onRegisterSuccess(newVolunteer.password);
-        }
+        alert("המתנדב נרשם בהצלחה! בדוק את המייל שלך לקבלת הסיסמה");
+        onRegisterSuccess(newVolunteer);
       } catch (error) {
         console.error("שגיאה בתהליך ההרשמה:", error);
         alert("חלה שגיאה ברישום המתנדב.");

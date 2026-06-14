@@ -59,13 +59,11 @@ class VolunteerService extends Service {
 
     async resetPassword(email) {
         try {
-            const volunteer= this.repo.findByEmail(email)
-            const id = volunteer._id
+            const volunteer = await this.repo.findByEmail(email);
+            if (!volunteer)
+                return { success: false, message: "האימייל לא נמצא במערכת" };
             const newPassword = crypto.randomBytes(4).toString('hex');
-            console.log('id received:', id, 'email:', email);
-            // const volunteer = await this.repo.byId(id);
-            console.log('volunteer found:', volunteer);
-            await this.repo.updatePassword(id, newPassword);
+            await this.repo.updatePassword(volunteer._id, newPassword);
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
@@ -73,80 +71,40 @@ class VolunteerService extends Service {
                     pass: 'nfgr zzog vcgj pptm'
                 }
             });
-            const mailOptions = {
+            await transporter.sendMail({
                 from: 'efrat0583228161@gmail.com',
                 to: email,
                 subject: 'מערכת מתנדבים - סיסמה חדשה',
-                html: `
-                    <div dir="rtl" style="font-family: Arial, sans-serif;">
-                        <p style="font-size: 18px;">שלום ${volunteer[0].firstName},</p>
-                        <p style="font-size: 16px;">הסיסמה החדשה שלך למערכת היא:</p>
-                        <p style="font-size: 22px; font-weight: bold; letter-spacing: 2px;">${newPassword}</p>
-                    </div>
-                `
-            };
-            await transporter.sendMail(mailOptions);
-
-            return { success: true, message: "הסיסמה שונתה והמייל נשלח" };
-
-        } catch (err) {
-            console.log(err);
-            throw Error('error resetting password');
-        }
-    }async resetPassword(email) {
-    try {
-        const newPassword = crypto.randomBytes(4).toString('hex');
-        const volunteer = await this.repo.findByEmail(email);
-        
-        if (!volunteer || volunteer.length === 0) {
-            return { success: false, message: "האימייל לא נמצא במערכת" };
-        }
-
-        await this.repo.updatePassword(volunteer[0]._id, newPassword);
-        
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: 'efrat0583228161@gmail.com',
-                pass: 'nfgr zzog vcgj pptm'
-            }
-        });
-        const mailOptions = {
-            from: 'efrat0583228161@gmail.com',
-            to: email,
-            subject: 'מערכת מתנדבים - סיסמה חדשה',
-            html: `
-                <div dir="rtl" style="font-family: Arial, sans-serif;">
-                    <p style="font-size: 18px;">שלום ${volunteer[0].firstName},</p>
+                html: `<div dir="rtl" style="font-family: Arial, sans-serif;">
+                    <p style="font-size: 18px;">שלום ${volunteer.firstName},</p>
                     <p style="font-size: 16px;">הסיסמה החדשה שלך למערכת היא:</p>
                     <p style="font-size: 22px; font-weight: bold; letter-spacing: 2px;">${newPassword}</p>
-                </div>
-            `
-        };
-        await transporter.sendMail(mailOptions);
-
-        return { success: true, message: "הסיסמה שונתה והמייל נשלח" };
-
-    } catch (err) {
-        console.log(err);
-        return { success: false, message: "שגיאה באיפוס הסיסמה" };
+                </div>`
+            });
+            return { success: true, message: "הסיסמה שונתה והמייל נשלח" };
+        } catch (err) {
+            console.log(err);
+            return { success: false, message: "שגיאה באיפוס הסיסמה" };
+        }
     }
-}
 
     async findByEmail(email, password){
         try{
-           const volunteer= this.repo.findByEmail(email)
+           const volunteer = await this.repo.findByEmail(email);
+           console.log('volunteer from DB:', volunteer);
+           console.log('password received:', password);
+           console.log('password in DB:', volunteer?.password);
+           if(!volunteer)
+               return {success: false, message: "האימייל לא קיים"}
            if(volunteer.password===password)
-            return {success: true, message: "הסיסמה תקינה"}
-        else
-            return {success: false, message: "שגויה הסיסמה"}
+               return {success: true, message: "הסיסמה תקינה", volunteer}
+           else
+               return {success: false, message: "שגויה הסיסמה"}
         }
         catch(error){
             console.log(error);
             return {success: false, message: "האימייל לא קיים"}
-
         }
-
     }
 
      async ById(id) {

@@ -34,26 +34,29 @@ const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
     fetchData();
   }, []);
 
-  const handleLoginSuccess = async (password: string) => {
-    setUserPassword(password);
-    console.log("הסיסמה שהתקבלה ב-Navbar:", password);
-
+  const handleLoginSuccess = async (password: string, email?: string) => {
     try {
       const response = await api.get('/volunteer');
       const updatedVolunteers = response.data as Volunteer[];
       setVolunteers(updatedVolunteers);
-      const found = updatedVolunteers.find(v => v.password === password);
+      const found = email
+        ? updatedVolunteers.find(v => v.email === email)
+        : updatedVolunteers.find(v => v.password === password);
       if (found) {
         setVolunteer(found);
         setShowLogin(false);
         setShowRegister(false);
         navigate('/');
-      } else {
-        setVolunteer(null);
       }
     } catch (err) {
       console.error("שגיאה בסנכרון הנתונים", err);
     }
+  };
+
+  const handleRegisterSuccess = (newVolunteer: Volunteer) => {
+    setVolunteer(newVolunteer);
+    setShowRegister(false);
+    navigate('/');
   };
 
   const switchToRegister = () => {
@@ -97,7 +100,7 @@ const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
         )}
       </div>
       {showLogin && <Login onLoginSuccess={handleLoginSuccess} onNavigateToRegister={switchToRegister} onClose={handleCloseLogin} />}
-      {showRegister && <Register onRegisterSuccess={handleLoginSuccess} onNavigateToLogin={switchToLogin} onClose={handleCloseRegister} />}
+      {showRegister && <Register onRegisterSuccess={handleRegisterSuccess} onNavigateToLogin={switchToLogin} onClose={handleCloseRegister} />}
       {showProfile && volunteer && <Profile volunteer={volunteer} onClose={handleCloseProfile} />}
       <AddHelpRequest onSuccess={onRefreshRequests} />
       </nav>

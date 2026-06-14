@@ -4,6 +4,7 @@ const controller = require('../controllers/VolunteerController.js')
 
 router.get('/', controller.getAll)
 router.post('/forgot-password', controller.resetPassword.bind(controller))
+router.get('/byEmail/:email', controller.getByEmail)
 router.get('/:id', controller.ById)
 router.post('/', controller.addVolunteer)
 router.put('/:id', controller.updateVolunteer)

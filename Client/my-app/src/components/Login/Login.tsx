@@ -1,64 +1,55 @@
-import type { FC } from 'react';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import './Login.scss';
-import type { Volunteer } from '../../models/volunteer.model';
 import api from '../../api';
 
 interface LoginProps {
-    onLoginSuccess: (password: string) => void;
+    onLoginSuccess: (password: string, email: string) => void;
     onNavigateToRegister: () => void;
     onClose: () => void;
 }
 
 export default function Login({ onLoginSuccess, onNavigateToRegister, onClose }: LoginProps) {
-    const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = async (e: any) => {
         e.preventDefault();
-        const volunteer = volunteers.find(v => v.email === email);
+        const response = await api.post('/volunteer/findByEmail', { email, password });
+        const result = response.data;
 
-        if (!volunteer) {
+        if (!result.success && result.message === "האימייל לא קיים") {
             setError("האימייל לא קיים במערכת, מעביר להרשמה...");
             alert("האימייל לא קיים במערכת, מועבר לדף ההרשמה");
-            onNavigateToRegister(); 
+            onNavigateToRegister();
             return;
         }
-        if (volunteer.password !== password) {
+        if (!result.success) {
             setError("הסיסמא שגויה");
             return;
         }
 
         setError("התחברות הצליחה");
-        console.log("התחברות הצליחה", volunteer);
-        onLoginSuccess(volunteer.password);
+        onLoginSuccess(password, email);
     };
 
     const handleForgotPassword = async () => {
-        const volunteer = volunteers.find(v => v.email === email);
-        if (!volunteer) return;
+        if (!email) return;
         try {
-            await api.post('/volunteer/forgot-password', {
-                id: volunteer._id,
-                email: volunteer.email
-            });
-            setSuccessMessage("סיסמה חדשה נשלחה לתיבת המייל שלך!");
-            setError("");
+            const response = await api.post('/volunteer/forgot-password', { email });
+            if (response.data.success) {
+                setSuccessMessage("סיסמה חדשה נשלחה לתיבת המייל שלך!");
+                setError("");
+                setPassword("");
+            } else {
+                setError(response.data.message || "אירעה שגיאה בשליחת המייל");
+            }
         } catch (err) {
             setError("אירעה שגיאה בשליחת המייל, נסה שנית");
         }
     };
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await api.get('/volunteer');
-            setVolunteers(response.data as Volunteer[]);
-        };
-        fetchData();
-    }, []);
 
     return (
         <div className='login-overlay' onClick={onClose}>
@@ -66,7 +57,7 @@ export default function Login({ onLoginSuccess, onNavigateToRegister, onClose }:
                 <form onSubmit={handleSubmit}>
                     <h2>התחברות</h2>
                     <input type="text" placeholder='אימייל' onChange={(e) => setEmail(e.target.value)} />
-                    <input type="password" placeholder='סיסמה' onChange={(e) => setPassword(e.target.value)} />
+                    <input type="password" placeholder='סיסמה' value={password} onChange={(e) => setPassword(e.target.value)} />
                     {error && <p className='modal-error'>{error}</p>}
                     {successMessage && <p className='modal-success'>{successMessage}</p>}
                     {error && error.includes("האימייל לא קיים") && (<button type="button" className='modal-link' onClick={onNavigateToRegister}>עבור להרשמה</button>)}

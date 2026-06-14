@@ -75,7 +75,6 @@ class HelpRequestRepo extends Repository {
     async addHelpRequest(helpRequest) {
         try {
             const last = await this.model.findOne().sort({ _id: -1 });
-            helpRequest._id = last ? last._id + 1 : 1;
             return await this.model.create(helpRequest);
         } catch(err) {
             console.log(err)

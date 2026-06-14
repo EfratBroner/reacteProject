@@ -40,8 +40,8 @@ class HelpRequestRepo extends Repository {
             let query = {};
             if (city) query['location.city'] = city;
             if (status) query.status = status;
-            if (priority) query['priority.namePriority'] = priority;
-            return await this.model.find(query);
+            if (priority) query.priority = priority;
+         return await this.model.find(query);
         } catch(err) {
             console.log(err)
             throw Error('error filtering data')

@@ -25,6 +25,15 @@ class VolunteerRepo extends Repository {
         }
     }
 
+    async findByEmail(email) {
+        try {
+            return await this.model.findOne({ email });
+        } catch (err) {
+            console.log(err);
+            throw Error('error finding volunteer by email');
+        }
+    }
+
     async updatePassword(id, newPassword) {
     try {
         return await this.model.updateOne({ _id: id }, { $set: { password: newPassword } });

@@ -6,4 +6,5 @@ export interface Volunteer {
     password: string;
     phone: string;
     specialties: string[];
+    role: string;
 }

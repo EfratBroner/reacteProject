@@ -1,1 +1,83 @@
-.HelpRequestDetails {}
+.HelpRequestDetails {
+  max-width: 600px;
+  margin: 40px auto;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  direction: rtl;
+  border-right: 6px solid #3498db;
+
+  h2 {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #ecf0f1;
+  }
+
+  .details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      &.full {
+        grid-column: 1 / -1;
+      }
+
+      label {
+        font-size: 0.8rem;
+        color: #95a5a6;
+        font-weight: bold;
+      }
+
+      span {
+        font-size: 1rem;
+        color: #2c3e50;
+      }
+    }
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: #e8f4fd;
+    color: #3498db;
+    font-size: 0.85rem;
+    font-weight: bold;
+  }
+
+  .priority-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+
+    &.קריטית { background: #fdecea; color: #e74c3c; }
+    &.גבוהה   { background: #fef3e2; color: #e67e22; }
+    &.בינונית { background: #fefde2; color: #f1c40f; }
+    &.נמוכה   { background: #eafaf1; color: #2ecc71; }
+  }
+
+  .back-btn {
+    margin-top: 24px;
+    padding: 10px 24px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: background 0.2s ease;
+
+    &:hover { background: #2980b9; }
+  }
+}

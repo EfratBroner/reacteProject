@@ -1,4 +1,4 @@
-import { useEffect, useState, type FC } from 'react';
+import { useEffect, useState, lazy, Suspense, type FC } from 'react';
 import './Navbar.scss';
 import Login from '../Login/Login';
 import type { Volunteer } from '../../models/volunteer.model';
@@ -6,7 +6,7 @@ import api from '../../api';
 import Register from '../Register/Register';
 import Profile from '../Profile/Profile';
 import { useNavigate } from 'react-router-dom';
-import AddHelpRequest from '../AddHelpRequest/AddHelpRequest';
+const AddHelpRequest = lazy(() => import('../AddHelpRequest/AddHelpRequest'));
 import type { HelpRequest } from '../../models/helpRequest.model';
 
 interface NavbarProps {
@@ -102,7 +102,11 @@ const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
       {showLogin && <Login onLoginSuccess={handleLoginSuccess} onNavigateToRegister={switchToRegister} onClose={handleCloseLogin} />}
       {showRegister && <Register onRegisterSuccess={handleRegisterSuccess} onNavigateToLogin={switchToLogin} onClose={handleCloseRegister} />}
       {showProfile && volunteer && <Profile volunteer={volunteer} onClose={handleCloseProfile} />}
-      <AddHelpRequest onSuccess={onRefreshRequests} />
+      {volunteer?.role === 'admin' && (
+        <Suspense fallback={null}>
+          <AddHelpRequest onSuccess={onRefreshRequests} />
+        </Suspense>
+      )}
       </nav>
   );
 };

@@ -36,7 +36,7 @@ const AddHelpRequest: FC<AddHelpRequestProps> = ({ onSuccess }) => {
       numberOfPeopleStranded: 0,
       location: { city: '', details: '' },
       priority: priorityOption[0],
-      status: { _id: 1, status: 'ממתין' },
+      status: 'ממתין',
       volunteerId: ''
     },
     validationSchema: validationSchema,

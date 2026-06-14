@@ -14,6 +14,6 @@ export interface HelpRequest {
   numberOfPeopleStranded: number;
   location: Location;
   priority: string;
-  status: status;
+  status: string;
   volunteerId: string;
 }

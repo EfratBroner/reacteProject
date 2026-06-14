@@ -6,9 +6,10 @@ import api from '../../api';
 
 interface HelpRequestListProps {
   requests: HelpRequest[];
+  onSelect: (request: HelpRequest) => void;
 }
 
-const HelpRequestList: FC<HelpRequestListProps> = ({ requests }) => {
+const HelpRequestList: FC<HelpRequestListProps> = ({ requests, onSelect }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedStatus, setSelectedStatus] = useState<string>('');
   const [selectedPriority, setSelectedPriority] = useState<string>('');
@@ -90,7 +91,7 @@ const HelpRequestList: FC<HelpRequestListProps> = ({ requests }) => {
       ) : (
         <ul>
           {displayRequests.map((r, index) => (
-            <HelpRequestCard key={index} request={r} />
+            <HelpRequestCard key={index} request={r} onClick={() => onSelect(r)} />
           ))}
         </ul>
       )}

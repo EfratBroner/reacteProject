@@ -4,11 +4,12 @@ import type { HelpRequest } from '../../models/helpRequest.model';
 
 interface HelpRequestCardProps {
   request: HelpRequest;
+  onClick: () => void;
 }
 
-const HelpRequestCard: FC<HelpRequestCardProps> = ({ request }) => {
+const HelpRequestCard: FC<HelpRequestCardProps> = ({ request, onClick }) => {
   return (
-    <div className='help-request-card'>
+    <div className='help-request-card' onClick={onClick}>
       <div className='card-header'>
         <span className='priority'>{request.priority }</span>
         <span className='city'>{request.location.city}</span>

@@ -42,6 +42,15 @@ class VolunteerRepo extends Repository {
         throw Error('error updating volunteer password');
     }
 }
+
+    async ById(id) {
+        try {
+            return await this.model.findById(id);
+        } catch (err) {
+            console.log(err);
+            throw Error('error getting volunteer by id');
+        }
+    }
 }
 
 module.exports = new VolunteerRepo();

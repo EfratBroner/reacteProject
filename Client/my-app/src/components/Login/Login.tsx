@@ -1,6 +1,9 @@
 import { useState } from "react";
 import './Login.scss';
 import api from '../../api';
+import { useDispatch } from 'react-redux';
+import { setVolunteer } from '../../redux/slices/volunteerSlice';
+import type { AppDispatch } from '../../main';
 
 interface LoginProps {
     onLoginSuccess: (password: string, email: string) => void;
@@ -9,6 +12,8 @@ interface LoginProps {
 }
 
 export default function Login({ onLoginSuccess, onNavigateToRegister, onClose }: LoginProps) {
+
+    const dispatch = useDispatch<AppDispatch>();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -32,6 +37,7 @@ export default function Login({ onLoginSuccess, onNavigateToRegister, onClose }:
         }
 
         setError("התחברות הצליחה");
+        dispatch(setVolunteer(result.volunteer));
         onLoginSuccess(password, email);
     };
 

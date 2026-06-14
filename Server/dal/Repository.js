@@ -24,6 +24,15 @@ class Repository {
         }
     }
 
+    async findByEmail(email){
+        try {
+            return await this.model.find({ email: email });
+        } catch(err) {
+            console.log(err)
+            throw Error('error getting the data')
+        }
+    }
+
     async updateOne(id, data) {
         try {
             return await this.model.updateOne({ _id: id }, { $set: data });

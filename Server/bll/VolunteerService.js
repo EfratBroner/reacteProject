@@ -20,12 +20,12 @@ class VolunteerService extends Service {
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
-                    user: 'efrat0583228161@gmail.com',
-                    pass: 'nfgr zzog vcgj pptm'
+                    user: 'mitnadvim.system@gmail.com',
+                    pass: 'ruyj wjex ahwt gcah'
                 }
             });
             const mailOptions = {
-                from: 'efrat0583228161@gmail.com',
+                from: 'mitnadvim.system@gmail.com',
                 to: volunteer.email,
                 subject: 'מערכת מתנדבים - נרשמת בהצלחה!',
                 html: `
@@ -67,12 +67,12 @@ class VolunteerService extends Service {
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
-                    user: 'efrat0583228161@gmail.com',
-                    pass: 'nfgr zzog vcgj pptm'
+                    user: 'mitnadvim.system@gmail.com',
+                    pass: 'ruyj wjex ahwt gcah'
                 }
             });
             await transporter.sendMail({
-                from: 'efrat0583228161@gmail.com',
+                from: 'מערכת מתנדבים',
                 to: email,
                 subject: 'מערכת מתנדבים - סיסמה חדשה',
                 html: `<div dir="rtl" style="font-family: Arial, sans-serif;">

@@ -1,4 +1,4 @@
-import { type FC, useState, useEffect } from 'react';
+import { type FC, useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import './HelpRequestDetails.scss';
@@ -10,6 +10,13 @@ interface HelpRequestDetailsProps {
   request: HelpRequest;
   onBack: () => void;
 }
+
+const priorityColor: Record<string, string> = {
+  קריטית: '#f87171',
+  גבוהה: '#fb923c',
+  בינונית: '#facc15',
+  נמוכה: '#4ade80',
+};
 
 const HelpRequestDetails: FC<HelpRequestDetailsProps> = ({ request, onBack }) => {
   const volunteer = useSelector((state: RootState) => state.volunteer.volunteer);
@@ -42,61 +49,80 @@ const HelpRequestDetails: FC<HelpRequestDetailsProps> = ({ request, onBack }) =>
     setStatus('הסתיים');
   };
 
+  const cardStyle = useMemo(() => {
+    return { 
+      '--priority-color': priorityColor[request.priority] 
+    } as React.CSSProperties;
+  }, [request.priority]); 
+
   return (
-  <div className="HelpRequestDetails">
-    <h2>פרטי בקשת עזרה</h2>
-    {volunteer && <p>שלום, {volunteer.firstName} {volunteer.lastName}</p>}
-    <div className="details-grid">
-      <div className="detail-item full">
-        <label>תיאור</label>
-        <span>{request.description}</span>
+    <div className="HelpRequestDetails" style={cardStyle}>
+      <div className="mission-header">
+        <div className="mission-label">בקשת התנדבות</div>
+        <h2>פרטי המשימה</h2>
+        {volunteer && <p className="volunteer-greeting">שלום, {volunteer.firstName} {volunteer.lastName} — תודה שאתה כאן 🤝</p>}
       </div>
-      <div className="detail-item">
-        <label>עיר</label>
-        <span>{request.location.city}</span>
+
+      <div className="mission-body">
+        <div className="description-block">
+          <div className="block-label">תיאור הבקשה</div>
+          <p>{request.description}</p>
+        </div>
+
+        <div className="info-grid">
+          <div className="info-cell">
+            <span className="cell-icon">📍</span>
+            <span className="cell-label">עיר</span>
+            <span className="cell-value">{request.location.city}</span>
+          </div>
+          <div className="info-cell">
+            <span className="cell-icon">🗺️</span>
+            <span className="cell-label">פירוט מיקום</span>
+            <span className="cell-value">{request.location.details}</span>
+          </div>
+          <div className="info-cell">
+            <span className="cell-icon">📞</span>
+            <span className="cell-label">טלפון</span>
+            <span className="cell-value">{request.phone}</span>
+          </div>
+          <div className="info-cell">
+            <span className="cell-icon">👥</span>
+            <span className="cell-label">מספר תקועים</span>
+            <span className="cell-value">{request.numberOfPeopleStranded}</span>
+          </div>
+        </div>
+
+        <div className="status-row">
+          <span className="row-label">דחיפות</span>
+          <span className={`priority-badge ${request.priority}`}>{request.priority}</span>
+          <span className="row-label" style={{ marginRight: '12px' }}>סטטוס</span>
+          <span className="status-badge">{status}</span>
+          {status !== 'ממתין' && assignedVolunteerName && (
+            <span className="assigned-name">מטפל: {assignedVolunteerName}</span>
+          )}
+        </div>
       </div>
-      <div className="detail-item">
-        <label>פירוט מיקום</label>
-        <span>{request.location.details}</span>
-      </div>
-      <div className="detail-item">
-        <label>טלפון</label>
-        <span>📞 {request.phone}</span>
-      </div>
-      <div className="detail-item">
-        <label>מספר תקועים</label>
-        <span>👥 {request.numberOfPeopleStranded}</span>
-      </div>
-      <div className="detail-item">
-        <label>דחיפות</label>
-        <span className={`priority-badge ${request.priority}`}>{request.priority}</span>
-      </div>
-      <div className="detail-item">
-        <label>סטטוס</label>
-        <span className="status-badge">{status}</span>
-        {status !== 'ממתין' && assignedVolunteerName && <span>{assignedVolunteerName}</span>}
+
+      <div className="actions">
+        <button className="back-btn" onClick={onBack}>→ חזור לרשימה</button>
+        <div className="volunteer-action">
+          {status === 'ממתין' && (
+            <button className={`take-btn ${taken ? 'taken' : ''}`} onClick={handleTake}>
+              {taken ? '✔ ההתנדבות עלי!' : 'ההתנדבות עלי!'}
+            </button>
+          )}
+          {status === 'בטיפול' && (
+            <button
+              className="done-btn"
+              onClick={handleDone}
+              disabled={!taken && volunteer?._id !== request.volunteerId}
+            >
+              סיימתי ✓
+            </button>
+          )}
+        </div>
       </div>
     </div>
-    <div className="actions">
-      <button className="back-btn" onClick={onBack}>→ חזור לרשימה</button>
-      <div className="volunteer-action">
-        {status === 'ממתין' && (
-          <button className={`take-btn ${taken ? 'taken' : ''}`} onClick={handleTake}>
-            {taken ? '✔ ההתנדבות עלי!' : 'ההתנדבות עלי!'}
-          </button>
-        )}
-        {status === 'בטיפול' && (
-          <button
-            className="done-btn"
-            onClick={handleDone}
-            disabled={!taken && volunteer?._id !== request.volunteerId}
-          >
-            סיימתי
-          </button>
-        )}
-      </div>
-    </div>
-  </div>
   );
 };
 

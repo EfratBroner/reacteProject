@@ -1,5 +1,6 @@
 import { type FC, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import './HelpRequestDetails.scss';
 import type { HelpRequest } from '../../models/helpRequest.model';
 import type { RootState } from '../../main';
@@ -12,18 +13,24 @@ interface HelpRequestDetailsProps {
 
 const HelpRequestDetails: FC<HelpRequestDetailsProps> = ({ request, onBack }) => {
   const volunteer = useSelector((state: RootState) => state.volunteer.volunteer);
+  const navigate = useNavigate();
   const [taken, setTaken] = useState(false);
   const [status, setStatus] = useState(request.status);
   const [assignedVolunteerName, setAssignedVolunteerName] = useState('');
 
   useEffect(() => {
-    if (!request.volunteerId) return;
-    api.get(`/volunteer/${request.volunteerId}`)
+    const volunteerId = taken ? volunteer?._id : request.volunteerId;
+    if (!volunteerId) return;
+    api.get(`/volunteer/${volunteerId}`)
       .then(res => setAssignedVolunteerName(`${res.data.firstName} ${res.data.lastName}`));
-  }, [request.volunteerId]);
+  }, [request.volunteerId, taken]);
 
   const handleTake = async () => {
-    if (!volunteer) return;
+    if (!volunteer) {
+      alert('עליך להתחבר תחילה');
+      navigate('/login');
+      return;
+    }
     await api.put(`/helpRequest/${request._id}/${volunteer._id}`);
     setStatus('בטיפול');
     setTaken(true);
@@ -74,7 +81,7 @@ const HelpRequestDetails: FC<HelpRequestDetailsProps> = ({ request, onBack }) =>
       <button className="back-btn" onClick={onBack}>→ חזור לרשימה</button>
       <div className="volunteer-action">
         {status === 'ממתין' && (
-          <button className={`take-btn ${taken ? 'taken' : ''}`} onClick={handleTake} disabled={!volunteer}>
+          <button className={`take-btn ${taken ? 'taken' : ''}`} onClick={handleTake}>
             {taken ? '✔ ההתנדבות עלי!' : 'ההתנדבות עלי!'}
           </button>
         )}
@@ -82,12 +89,11 @@ const HelpRequestDetails: FC<HelpRequestDetailsProps> = ({ request, onBack }) =>
           <button
             className="done-btn"
             onClick={handleDone}
-            disabled={volunteer?._id !== request.volunteerId}
+            disabled={!taken && volunteer?._id !== request.volunteerId}
           >
             סיימתי
           </button>
         )}
-        {taken && status === 'בטיפול' && <span className="in-progress">הבקשה בטיפול</span>}
       </div>
     </div>
   </div>

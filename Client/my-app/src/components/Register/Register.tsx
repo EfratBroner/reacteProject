@@ -10,6 +10,7 @@ interface RegisterProps {
   onRegisterSuccess: (volunteer: Volunteer) => void;
   onNavigateToLogin: () => void;
   onClose: () => void;
+  volunteer: Volunteer | null;
 }
 
 interface RegisterFormValues {
@@ -29,9 +30,12 @@ interface Toast {
 
 let toastCounter = 0;
 
-export default function Register({ onRegisterSuccess, onClose, onNavigateToLogin }: RegisterProps) {
+export default function Register({ onRegisterSuccess, onClose, onNavigateToLogin, volunteer }: RegisterProps) {
   const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
+
+  const isEditMode = !!volunteer;
 
   const addToast = useCallback((message: string, type: ToastType) => {
     const id = ++toastCounter;
@@ -59,51 +63,103 @@ export default function Register({ onRegisterSuccess, onClose, onNavigateToLogin
     specialties: Yup.string().required('חובה למלא לפחות התמחות אחת'),
   });
 
+  const handleResetPassword = async () => {
+    if (!volunteer) return;
+    const volunteerId = volunteer._id;
+
+    try {
+      setIsResettingPassword(true);
+      await api.post('/volunteer/forgot-password', { id: volunteerId, email: volunteer.email });
+      addToast('סיסמה חדשה נשלחה לתיבת המייל שלך! ✉️', 'success');
+    } catch (err) {
+      console.error("שגיאה באיפוס סיסמה:", err);
+      addToast('אירעה שגיאה בשליחת הסיסמה, נסה שנית', 'error');
+    } finally {
+      setIsResettingPassword(false);
+    }
+  };
+
   const formik = useFormik<RegisterFormValues>({
     initialValues: { email: '', firstName: '', lastName: '', phone: '', specialties: '' },
     validationSchema,
     onSubmit: async (values) => {
-      const exists = volunteers.some(v => v.email === values.email);
-      if (exists) {
-        addToast("המתנדב קיים — מועבר לדף ההתחברות", "info");
-        setTimeout(() => onNavigateToLogin(), 1800);
-        return;
-      }
-      try {
-        await api.post('/volunteer', {
-          firstName: values.firstName,
-          lastName: values.lastName,
-          email: values.email,
-          phone: values.phone,
-          specialties: values.specialties.split(',').map(s => s.trim())
-        });
-        const newVolunteer = await api.get(`/volunteer/byEmail/${values.email}`).then(r => r.data);
-        formik.resetForm();
-        addToast("נרשמת בהצלחה! בדוק את המייל לקבלת הסיסמה ✉️", "success");
-        setTimeout(() => onRegisterSuccess(newVolunteer), 1600);
-      } catch (error) {
-        console.error("שגיאה בתהליך ההרשמה:", error);
-        addToast("שגיאה ברישום, נסה שנית", "error");
+      const volunteerId = volunteer?._id;
+
+      if (isEditMode && volunteerId) {
+        try {
+          await api.put(`/volunteer/${volunteerId}`, {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            phone: values.phone,
+            specialties: values.specialties.split(',').map(s => s.trim())
+          });
+
+          addToast('הפרטים נשמרו בהצלחה! ✨', 'success');
+
+          const updatedVolunteer = await api.get(`/volunteer/byEmail/${values.email}`).then(r => r.data);
+          setTimeout(() => {
+            onRegisterSuccess(updatedVolunteer);
+            handleClose();
+          }, 1600);
+        } catch (error) {
+          console.error("שגיאה בשמירת הנתונים:", error);
+          addToast('אירעה שגיאה בשמירה, נסה שנית', 'error');
+        }
+      } else {
+        const exists = volunteers.some(v => v.email === values.email);
+        if (exists) {
+          addToast("המתנדב קיים — מועבר לדף ההתחברות", "info");
+          setTimeout(() => onNavigateToLogin(), 1800);
+          return;
+        }
+        try {
+          await api.post('/volunteer', {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            phone: values.phone,
+            specialties: values.specialties.split(',').map(s => s.trim())
+          });
+          const newVolunteer = await api.get(`/volunteer/byEmail/${values.email}`).then(r => r.data);
+          formik.resetForm();
+          addToast("נרשמת בהצלחה! בדוק את המייל לקבלת הסיסמה ✉️", "success");
+          setTimeout(() => onRegisterSuccess(newVolunteer), 1600);
+        } catch (error) {
+          console.error("שגיאה בתהליך ההרשמה:", error);
+          addToast("שגיאה ברישום, נסה שנית", "error");
+        }
       }
     }
   });
+
+  useEffect(() => {
+    if (volunteer) {
+      formik.setValues({
+        firstName: volunteer.firstName || '',
+        lastName: volunteer.lastName || '',
+        email: volunteer.email || '',
+        phone: volunteer.phone || '',
+        specialties: Array.isArray(volunteer.specialties) ? volunteer.specialties.join(', ') : (volunteer.specialties || ''),
+      });
+    }
+  }, [volunteer]);
 
   const handleClose = () => {
     formik.resetForm();
     onClose();
   };
 
-  const fields: { name: keyof RegisterFormValues; label: string; type?: string; icon: string }[] = [
-    { name: 'firstName', label: 'שם פרטי', icon: '👤' },
-    { name: 'lastName', label: 'שם משפחה', icon: '👤' },
-    { name: 'email', label: 'אימייל', type: 'email', icon: '✉' },
-    { name: 'phone', label: 'טלפון', icon: '📱' },
-    { name: 'specialties', label: 'התמחויות (מופרדות בפסיקים)', icon: '⚡' },
+  const fields = [
+    { name: 'firstName' as const, label: 'שם פרטי', icon: '👤' },
+    { name: 'lastName' as const, label: 'שם משפחה', icon: '👤' },
+    { name: 'email' as const, label: 'אימייל', type: 'email', icon: '✉', readOnly: isEditMode },
+    { name: 'phone' as const, label: 'טלפון', icon: '📱' },
+    { name: 'specialties' as const, label: 'התמחויות (מופרדות בפסיקים)', icon: '⚡' },
   ];
 
   return (
     <>
-      {/* Toast Container */}
       <div className="toast-container">
         {toasts.map(toast => (
           <div key={toast.id} className={`toast toast--${toast.type}`}>
@@ -127,32 +183,32 @@ export default function Register({ onRegisterSuccess, onClose, onNavigateToLogin
             <div className="modal-header">
               <div className="modal-logo">
                 <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                  <circle cx="16" cy="16" r="15" stroke="url(#grad2)" strokeWidth="2"/>
-                  <path d="M16 8v8l5 3" stroke="url(#grad2)" strokeWidth="2.5" strokeLinecap="round"/>
+                  <circle cx="16" cy="16" r="15" stroke="url(#grad2)" strokeWidth="2" />
+                  <path d="M16 8v8l5 3" stroke="url(#grad2)" strokeWidth="2.5" strokeLinecap="round" />
                   <defs>
                     <linearGradient id="grad2" x1="0" y1="0" x2="32" y2="32">
-                      <stop offset="0%" stopColor="#6366f1"/>
-                      <stop offset="100%" stopColor="#22d3ee"/>
+                      <stop offset="0%" stopColor="#6366f1" />
+                      <stop offset="100%" stopColor="#22d3ee" />
                     </linearGradient>
                   </defs>
                 </svg>
               </div>
-              <h2>הרשמה</h2>
-              <p className="modal-subtitle">הצטרף לצוות המתנדבים</p>
+              <h2>{isEditMode ? 'הפרופיל שלי' : 'הרשמה'}</h2>
+              <p className="modal-subtitle">{isEditMode ? 'עדכון פרטי חשבון וניהול סיסמה' : 'הצטרף לצוות המתנדבים'}</p>
             </div>
 
-            {fields.map(({ name, label, type = 'text', icon }) => (
+            {fields.map(({ name, label, type = 'text', icon, readOnly }) => (
               <div className="input-group" key={name}>
                 <input
                   type={type}
                   name={name}
                   id={name}
                   placeholder=" "
-                  value={formik.values[name]}
+                  value={formik.values[name] || ''}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  className={formik.values[name] ? 'has-value' : ''}
-                />
+                  readOnly={readOnly}
+                  className={`${formik.values[name] ? 'has-value' : ''} ${readOnly ? 'input-readonly' : ''}`} />
                 <label htmlFor={name}>{label}</label>
                 <span className="input-icon">{icon}</span>
                 {formik.touched[name] && formik.errors[name] && (
@@ -161,23 +217,49 @@ export default function Register({ onRegisterSuccess, onClose, onNavigateToLogin
               </div>
             ))}
 
-            <button type='submit' className='modal-submit' disabled={formik.isSubmitting}>
-              {formik.isSubmitting ? (
-                <span className="spinner" />
-              ) : (
-                <>
-                  <span>הרשמה</span>
-                  <span className="btn-arrow">←</span>
-                </>
-              )}
-            </button>
+            {isEditMode ? (
+              <div className="profile-actions-wrapper">
+                <button
+                  type="button"
+                  className="modal-submit modal-submit--secondary"
+                  onClick={handleResetPassword}
+                  disabled={isResettingPassword}
+                >
+                  {isResettingPassword ? <span className="spinner" /> : 'עדכון סיסמה'}
+                </button>
 
-            <p className="login-prompt">
-              כבר יש לך חשבון?{' '}
-              <button type="button" className="modal-link" onClick={onNavigateToLogin}>
-                התחברות
-              </button>
-            </p>
+                <button type='submit' className='modal-submit' disabled={formik.isSubmitting}>
+                  {formik.isSubmitting ? (
+                    <span className="spinner" />
+                  ) : (
+                    <>
+                      <span>שמירת שינויים</span>
+                      <span className="btn-arrow">✓</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            ) : (
+              <>
+                <button type='submit' className='modal-submit' disabled={formik.isSubmitting}>
+                  {formik.isSubmitting ? (
+                    <span className="spinner" />
+                  ) : (
+                    <>
+                      <span>הרשמה</span>
+                      <span className="btn-arrow">←</span>
+                    </>
+                  )}
+                </button>
+
+                <p className="login-prompt">
+                  כבר יש לך חשבון?{' '}
+                  <button type="button" className="modal-link" onClick={onNavigateToLogin}>
+                    התחברות
+                  </button>
+                </p>
+              </>
+            )}
           </form>
         </div>
       </div>

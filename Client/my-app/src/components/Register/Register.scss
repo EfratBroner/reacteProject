@@ -289,6 +289,25 @@ $text-dim:    #94a3b8;
   }
 }
 
+// ─── Input readonly ─────────────────────────────────────────
+.input-readonly {
+  opacity: 0.55;
+  cursor: not-allowed;
+  user-select: none;
+}
+
+// ─── Profile actions ──────────────────────────────────────
+.profile-actions-wrapper {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+
+  .modal-submit {
+    flex: 1;
+    margin-top: 0;
+  }
+}
+
 // ─── Submit button ────────────────────────────────────────
 .modal-submit {
   margin-top: 0.25rem;
@@ -334,6 +353,17 @@ $text-dim:    #94a3b8;
 
   &:active:not(:disabled) { transform: translateY(0); }
   &:disabled { opacity: 0.7; cursor: not-allowed; }
+
+  &--secondary {
+    background: transparent;
+    border: 1px solid $border-focus;
+    color: $indigo;
+
+    &:hover:not(:disabled) {
+      background: rgba(99,102,241,0.1);
+      box-shadow: 0 8px 24px rgba(99,102,241,0.2);
+    }
+  }
 
   .btn-arrow {
     font-size: 1.1rem;

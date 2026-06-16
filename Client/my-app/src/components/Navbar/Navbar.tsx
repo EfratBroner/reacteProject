@@ -4,10 +4,8 @@ import Login from '../Login/Login';
 import type { Volunteer } from '../../models/volunteer.model';
 import api from '../../api';
 import Register from '../Register/Register';
-import Profile from '../Profile/Profile';
 import { useNavigate } from 'react-router-dom';
 const AddHelpRequest = lazy(() => import('../AddHelpRequest/AddHelpRequest'));
-import type { HelpRequest } from '../../models/helpRequest.model';
 
 interface NavbarProps {
   onRefreshRequests: () => Promise<void>;
@@ -18,7 +16,6 @@ const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
   const [showRegister, setShowRegister] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
-  const [userPassword, setUserPassword] = useState<string>("");
   const [volunteer, setVolunteer] = useState<Volunteer | null>(null);
   const navigate = useNavigate();
 
@@ -46,6 +43,7 @@ const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
         setVolunteer(found);
         setShowLogin(false);
         setShowRegister(false);
+        setShowProfile(false);
         navigate('/');
       }
     } catch (err) {
@@ -56,58 +54,90 @@ const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
   const handleRegisterSuccess = (newVolunteer: Volunteer) => {
     setVolunteer(newVolunteer);
     setShowRegister(false);
+    setShowProfile(false);
     navigate('/');
   };
 
   const switchToRegister = () => {
     setShowLogin(false);
     setShowRegister(true);
+    setShowProfile(false);
     navigate('/register');
   };
 
   const switchToLogin = () => {
     setShowRegister(false);
+    setShowProfile(false);
     setShowLogin(true);
     navigate('/login');
   };
 
-  const handleCloseLogin = () => {
-    setShowLogin(false);
-    navigate('/'); 
-  };
-
-  const handleCloseRegister = () => {
-    setShowRegister(false);
-    navigate('/'); 
-  };
-
-  const handleCloseProfile = () => {
-    setShowProfile(false);
-    navigate('/'); 
-  };
+  const handleCloseLogin = () => { setShowLogin(false); navigate('/'); };
+  const handleCloseRegister = () => { setShowRegister(false); navigate('/'); };
+  const handleCloseProfile = () => { setShowProfile(false); navigate('/'); };
 
   return (
-    <nav className="navbar">
-      <div className="navbar__brand">🤝 מערכת מתנדבים</div>
-      <div className="navbar__actions">
-        {!volunteer ? (<>
-          <button className="navbar__btn navbar__btn--outline" onClick={() => { setShowLogin(true); setShowRegister(false); navigate('/login');}}>התחברות</button>
-          <button className="navbar__btn navbar__btn--primary" onClick={() => { setShowRegister(true); setShowLogin(false); navigate('/register');}}>הרשמה</button>
-        </>) : (<>
-          <span className="navbar__greeting">שלום, {volunteer.firstName}! 👋</span>
-          <button className="navbar__btn navbar__btn--outline" onClick={() => {setShowProfile(true); navigate('/profile');}}>הפרופיל שלי</button>
-          <button className="navbar__btn navbar__btn--outline" onClick={() => setVolunteer(null)}>התנתק</button></>
-        )}
-      </div>
-      {showLogin && <Login onLoginSuccess={handleLoginSuccess} onNavigateToRegister={switchToRegister} onClose={handleCloseLogin} />}
-      {showRegister && <Register onRegisterSuccess={handleRegisterSuccess} onNavigateToLogin={switchToLogin} onClose={handleCloseRegister} />}
-      {showProfile && volunteer && <Profile volunteer={volunteer} onClose={handleCloseProfile} />}
-      {volunteer?.role === 'admin' && (
-        <Suspense fallback={null}>
-          <AddHelpRequest onSuccess={onRefreshRequests} />
-        </Suspense>
-      )}
+    <>
+      <nav className="navbar">
+        <div className="navbar__brand">
+          <span className="brand-emoji">🤝</span>
+          מערכת מתנדבים
+        </div>
+
+        <div className="navbar__actions">
+          {!volunteer ? (
+            <>
+              <button
+                className="navbar__btn navbar__btn--outline"
+                onClick={() => { setShowLogin(true); setShowRegister(false); navigate('/login'); }}
+              >
+                התחברות
+              </button>
+              <button
+                className="navbar__btn navbar__btn--primary"
+                onClick={() => { setShowRegister(true); setShowLogin(false); navigate('/register'); }}
+              >
+                הרשמה
+              </button>
+            </>
+          ) : (
+            <>
+              <span className="navbar__greeting">שלום, {volunteer.firstName}! 👋</span>
+              <button
+                className="navbar__btn navbar__btn--outline"
+                onClick={() => { setShowProfile(true); navigate('/profile'); }}
+              >
+                הפרופיל שלי
+              </button>
+              <button
+                className="navbar__btn navbar__btn--danger"
+                onClick={() => setVolunteer(null)}
+              >
+                התנתק
+              </button>
+            </>
+          )}
+        </div>
       </nav>
+
+      {showLogin && (
+        <Login onLoginSuccess={handleLoginSuccess} onNavigateToRegister={switchToRegister} onClose={handleCloseLogin} />
+      )}
+      {showRegister && (
+        <Register volunteer={null} onRegisterSuccess={handleRegisterSuccess} onNavigateToLogin={switchToLogin} onClose={handleCloseRegister} />
+      )}
+      {showProfile && volunteer && (
+        <Register volunteer={volunteer} onRegisterSuccess={handleRegisterSuccess} onNavigateToLogin={switchToLogin} onClose={handleCloseProfile} />
+      )}
+
+      {volunteer?.role === 'admin' && (
+        <div className="admin-fab-wrapper">
+          <Suspense fallback={null}>
+            <AddHelpRequest onSuccess={onRefreshRequests} />
+          </Suspense>
+        </div>
+      )}
+    </>
   );
 };
 

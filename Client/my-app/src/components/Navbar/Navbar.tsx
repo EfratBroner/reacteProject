@@ -5,6 +5,9 @@ import type { Volunteer } from '../../models/volunteer.model';
 import api from '../../api';
 import Register from '../Register/Register';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { setVolunteer, clearVolunteer } from '../../redux/slices/volunteerSlice';
+import type { RootState, AppDispatch } from '../../main';
 const AddHelpRequest = lazy(() => import('../AddHelpRequest/AddHelpRequest'));
 
 interface NavbarProps {
@@ -16,7 +19,8 @@ const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
   const [showRegister, setShowRegister] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
-  const [volunteer, setVolunteer] = useState<Volunteer | null>(null);
+  const volunteer = useSelector((state: RootState) => state.volunteer.volunteer);
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,7 +44,7 @@ const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
         ? updatedVolunteers.find(v => v.email === email)
         : updatedVolunteers.find(v => v.password === password);
       if (found) {
-        setVolunteer(found);
+        dispatch(setVolunteer(found));
         setShowLogin(false);
         setShowRegister(false);
         setShowProfile(false);
@@ -52,7 +56,7 @@ const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
   };
 
   const handleRegisterSuccess = (newVolunteer: Volunteer) => {
-    setVolunteer(newVolunteer);
+    dispatch(setVolunteer(newVolunteer));
     setShowRegister(false);
     setShowProfile(false);
     navigate('/');
@@ -111,7 +115,7 @@ const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
               </button>
               <button
                 className="navbar__btn navbar__btn--danger"
-                onClick={() => setVolunteer(null)}
+                onClick={() => dispatch(clearVolunteer())}
               >
                 התנתק
               </button>

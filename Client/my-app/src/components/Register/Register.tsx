@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import './Register.scss';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import api from '../../api';
 import type { Volunteer } from '../../models/volunteer.model';
 import { useFormik } from 'formik';
@@ -20,8 +20,24 @@ interface RegisterFormValues {
   specialties: string;
 }
 
+type ToastType = 'success' | 'error' | 'info';
+interface Toast {
+  id: number;
+  message: string;
+  type: ToastType;
+}
+
+let toastCounter = 0;
+
 export default function Register({ onRegisterSuccess, onClose, onNavigateToLogin }: RegisterProps) {
   const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+
+  const addToast = useCallback((message: string, type: ToastType) => {
+    const id = ++toastCounter;
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 4000);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,56 +52,38 @@ export default function Register({ onRegisterSuccess, onClose, onNavigateToLogin
   }, []);
 
   const validationSchema = Yup.object({
-    firstName: Yup.string()
-      .required('חובה למלא שם פרטי')
-      .min(2, 'שם פרטי חייב להכיל לפחות 2 אותיות'),
-    lastName: Yup.string()
-      .required('חובה למלא שם משפחה')
-      .min(2, 'שם משפחה חייב להכיל לפחות 2 אותיות'),
-    email: Yup.string()
-      .required('חובה למלא כתובת אימייל')
-      .email('כתובת האימייל אינה תקינה'),
-    phone: Yup.string()
-      .required('חובה למלא מספר טלפון')
-      .matches(/^05\d[-]?\d{7}$/, 'מספר הטלפון חייב להיות פורמט סלולרי תקין'),
-    specialties: Yup.string()
-      .required('חובה למלא לפחות התמחות אחת'),
+    firstName: Yup.string().required('חובה למלא שם פרטי').min(2, 'לפחות 2 אותיות'),
+    lastName: Yup.string().required('חובה למלא שם משפחה').min(2, 'לפחות 2 אותיות'),
+    email: Yup.string().required('חובה למלא אימייל').email('כתובת האימייל אינה תקינה'),
+    phone: Yup.string().required('חובה למלא טלפון').matches(/^05\d[-]?\d{7}$/, 'פורמט סלולרי לא תקין'),
+    specialties: Yup.string().required('חובה למלא לפחות התמחות אחת'),
   });
 
   const formik = useFormik<RegisterFormValues>({
-    initialValues: {
-      email: '',
-      firstName: '',
-      lastName: '',
-      phone: '',
-      specialties: '',
-    },
-    validationSchema: validationSchema,
+    initialValues: { email: '', firstName: '', lastName: '', phone: '', specialties: '' },
+    validationSchema,
     onSubmit: async (values) => {
       const exists = volunteers.some(v => v.email === values.email);
-
       if (exists) {
-        alert("המתנדב קיים במערכת, מועבר לדף התחברות...");
-        onNavigateToLogin();
+        addToast("המתנדב קיים — מועבר לדף ההתחברות", "info");
+        setTimeout(() => onNavigateToLogin(), 1800);
         return;
       }
-
       try {
-        const response = await api.post('/volunteer', {
+        await api.post('/volunteer', {
           firstName: values.firstName,
           lastName: values.lastName,
           email: values.email,
           phone: values.phone,
           specialties: values.specialties.split(',').map(s => s.trim())
         });
-
         const newVolunteer = await api.get(`/volunteer/byEmail/${values.email}`).then(r => r.data);
         formik.resetForm();
-        alert("המתנדב נרשם בהצלחה! בדוק את המייל שלך לקבלת הסיסמה");
-        onRegisterSuccess(newVolunteer);
+        addToast("נרשמת בהצלחה! בדוק את המייל לקבלת הסיסמה ✉️", "success");
+        setTimeout(() => onRegisterSuccess(newVolunteer), 1600);
       } catch (error) {
         console.error("שגיאה בתהליך ההרשמה:", error);
-        alert("חלה שגיאה ברישום המתנדב.");
+        addToast("שגיאה ברישום, נסה שנית", "error");
       }
     }
   });
@@ -95,85 +93,94 @@ export default function Register({ onRegisterSuccess, onClose, onNavigateToLogin
     onClose();
   };
 
+  const fields: { name: keyof RegisterFormValues; label: string; type?: string; icon: string }[] = [
+    { name: 'firstName', label: 'שם פרטי', icon: '👤' },
+    { name: 'lastName', label: 'שם משפחה', icon: '👤' },
+    { name: 'email', label: 'אימייל', type: 'email', icon: '✉' },
+    { name: 'phone', label: 'טלפון', icon: '📱' },
+    { name: 'specialties', label: 'התמחויות (מופרדות בפסיקים)', icon: '⚡' },
+  ];
+
   return (
-    <div className='register-overlay' onClick={handleClose}>
-      <div className='register-modal' onClick={e => e.stopPropagation()}>
-        <form onSubmit={formik.handleSubmit}>
-          <h2>הרשמה</h2>
-
-          <div className="form-group">
-            <input
-              type="text"
-              name="firstName"
-              placeholder='שם פרטי'
-              value={formik.values.firstName}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            />
-            {formik.touched.firstName && formik.errors.firstName ? (
-              <div className="error-message">{formik.errors.firstName}</div>
-            ) : null}
+    <>
+      {/* Toast Container */}
+      <div className="toast-container">
+        {toasts.map(toast => (
+          <div key={toast.id} className={`toast toast--${toast.type}`}>
+            <span className="toast-icon">
+              {toast.type === 'success' && '✓'}
+              {toast.type === 'error' && '✕'}
+              {toast.type === 'info' && 'ℹ'}
+            </span>
+            <span className="toast-message">{toast.message}</span>
+            <div className="toast-progress" />
           </div>
-
-          <div className="form-group">
-            <input
-              type="text"
-              name="lastName"
-              placeholder='שם משפחה'
-              value={formik.values.lastName}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            />
-            {formik.touched.lastName && formik.errors.lastName ? (
-              <div className="error-message">{formik.errors.lastName}</div>
-            ) : null}
-          </div>
-
-          <div className="form-group">
-            <input
-              type="text"
-              name="email"
-              placeholder='אימייל'
-              value={formik.values.email}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            />
-            {formik.touched.email && formik.errors.email ? (
-              <div className="error-message">{formik.errors.email}</div>
-            ) : null}
-          </div>
-
-          <div className="form-group">
-            <input
-              type="text"
-              name="phone"
-              placeholder='טלפון'
-              value={formik.values.phone}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            />
-            {formik.touched.phone && formik.errors.phone ? (
-              <div className="error-message">{formik.errors.phone}</div>
-            ) : null}
-          </div>
-
-          <div className="form-group">
-            <input
-              type="text"
-              name="specialties"
-              placeholder='התמחויות (מופרדות בפסיקים)'
-              value={formik.values.specialties}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            />
-            {formik.touched.specialties && formik.errors.specialties ? (
-              <div className="error-message">{formik.errors.specialties}</div>
-            ) : null}
-          </div>
-
-          <button type='submit' className='modal-submit'>הרשם</button>
-        </form>
+        ))}
       </div>
-    </div>
+
+      <div className='register-overlay' onClick={handleClose}>
+        <div className='register-modal' onClick={e => e.stopPropagation()}>
+          <div className="modal-glow modal-glow--top" />
+          <div className="modal-glow modal-glow--bottom" />
+
+          <form onSubmit={formik.handleSubmit}>
+            <div className="modal-header">
+              <div className="modal-logo">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <circle cx="16" cy="16" r="15" stroke="url(#grad2)" strokeWidth="2"/>
+                  <path d="M16 8v8l5 3" stroke="url(#grad2)" strokeWidth="2.5" strokeLinecap="round"/>
+                  <defs>
+                    <linearGradient id="grad2" x1="0" y1="0" x2="32" y2="32">
+                      <stop offset="0%" stopColor="#6366f1"/>
+                      <stop offset="100%" stopColor="#22d3ee"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
+              <h2>הרשמה</h2>
+              <p className="modal-subtitle">הצטרף לצוות המתנדבים</p>
+            </div>
+
+            {fields.map(({ name, label, type = 'text', icon }) => (
+              <div className="input-group" key={name}>
+                <input
+                  type={type}
+                  name={name}
+                  id={name}
+                  placeholder=" "
+                  value={formik.values[name]}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className={formik.values[name] ? 'has-value' : ''}
+                />
+                <label htmlFor={name}>{label}</label>
+                <span className="input-icon">{icon}</span>
+                {formik.touched[name] && formik.errors[name] && (
+                  <div className="field-error">{formik.errors[name]}</div>
+                )}
+              </div>
+            ))}
+
+            <button type='submit' className='modal-submit' disabled={formik.isSubmitting}>
+              {formik.isSubmitting ? (
+                <span className="spinner" />
+              ) : (
+                <>
+                  <span>הרשמה</span>
+                  <span className="btn-arrow">←</span>
+                </>
+              )}
+            </button>
+
+            <p className="login-prompt">
+              כבר יש לך חשבון?{' '}
+              <button type="button" className="modal-link" onClick={onNavigateToLogin}>
+                התחברות
+              </button>
+            </p>
+          </form>
+        </div>
+      </div>
+    </>
   );
 }

@@ -1,111 +1,388 @@
+// ─── Tokens ───────────────────────────────────────────────
+$bg-deep:     #0d1117;
+$bg-modal:    #161b27;
+$bg-input:    #0d1117;
+$border:      #1e2a3a;
+$border-focus:#6366f1;
+$indigo:      #6366f1;
+$indigo-dark: #4f46e5;
+$cyan:        #22d3ee;
+$success:     #22d3ee;
+$error:       #f43f5e;
+$info:        #818cf8;
+$text-main:   #e2e8f0;
+$text-muted:  #64748b;
+$text-dim:    #94a3b8;
+
+// ─── Toast ────────────────────────────────────────────────
+.toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  z-index: 9999;
+  pointer-events: none;
+  align-items: center;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  min-width: 280px;
+  max-width: 380px;
+  backdrop-filter: blur(12px);
+  border: 1px solid transparent;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  position: relative;
+  overflow: hidden;
+  direction: rtl;
+  animation: toastIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+
+  &--success {
+    background: rgba(34, 211, 238, 0.12);
+    border-color: rgba(34, 211, 238, 0.3);
+    .toast-icon { color: $success; background: rgba(34,211,238,0.15); }
+    .toast-progress { background: $success; }
+  }
+  &--error {
+    background: rgba(244, 63, 94, 0.12);
+    border-color: rgba(244, 63, 94, 0.3);
+    .toast-icon { color: $error; background: rgba(244,63,94,0.15); }
+    .toast-progress { background: $error; }
+  }
+  &--info {
+    background: rgba(99, 102, 241, 0.12);
+    border-color: rgba(99, 102, 241, 0.3);
+    .toast-icon { color: $info; background: rgba(99,102,241,0.15); }
+    .toast-progress { background: $info; }
+  }
+}
+
+.toast-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.toast-message {
+  color: $text-main;
+  font-size: 0.9rem;
+  font-weight: 500;
+  flex: 1;
+}
+
+.toast-progress {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 3px;
+  width: 100%;
+  border-radius: 0 0 12px 12px;
+  animation: progressShrink 4s linear forwards;
+  transform-origin: right;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes progressShrink {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+
+// ─── Overlay ──────────────────────────────────────────────
 .login-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  backdrop-filter: blur(3px);
+  backdrop-filter: blur(6px);
   animation: fadeIn 0.2s ease;
 }
 
+// ─── Modal ────────────────────────────────────────────────
 .login-modal {
-  background: #1e293b;
-  border-radius: 12px;
-  padding: 2rem;
+  background: $bg-modal;
+  border-radius: 20px;
+  padding: 2.25rem 2rem;
   width: 100%;
-  max-width: 380px;
+  max-width: 390px;
   position: relative;
   direction: rtl;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-  animation: slideUp 0.25s ease;
-
-  h2 {
-    color: #e2e8f0;
-    margin-bottom: 1.5rem;
-    font-size: 1.4rem;
-    text-align: center;
-  }
+  border: 1px solid $border;
+  box-shadow:
+    0 0 0 1px rgba(99,102,241,0.08),
+    0 24px 64px rgba(0,0,0,0.6),
+    0 0 80px rgba(99,102,241,0.06);
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+  overflow: hidden;
 
   form {
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;
-  }
-
-  input {
-    padding: 0.65rem 1rem;
-    border-radius: 8px;
-    border: 1px solid #334155;
-    background: #0f172a;
-    color: #e2e8f0;
-    font-size: 0.95rem;
-    outline: none;
-    transition: border-color 0.2s;
-
-    &:focus {
-      border-color: #6366f1;
-    }
-
-    &::placeholder {
-      color: #64748b;
-    }
+    gap: 1rem;
+    position: relative;
+    z-index: 1;
   }
 }
 
+// ─── Glow orbs ────────────────────────────────────────────
+.modal-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+
+  &--top {
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+    top: -60px;
+    right: -40px;
+  }
+  &--bottom {
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle, rgba(34,211,238,0.1) 0%, transparent 70%);
+    bottom: -50px;
+    left: -30px;
+  }
+}
+
+// ─── Modal header ─────────────────────────────────────────
+.modal-header {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.modal-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+.login-modal h2 {
+  color: $text-main;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+  letter-spacing: -0.02em;
+}
+
+.modal-subtitle {
+  color: $text-muted;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+// ─── Floating label inputs ────────────────────────────────
+.input-group {
+  position: relative;
+
+  input {
+    width: 100%;
+    padding: 1rem 2.75rem 0.4rem 1rem;
+    border-radius: 10px;
+    border: 1px solid $border;
+    background: $bg-input;
+    color: $text-main;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+
+    &:focus,
+    &.has-value,
+    &:not(:placeholder-shown) {
+      border-color: $border-focus;
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+    }
+
+    &:focus + label,
+    &:not(:placeholder-shown) + label,
+    &.has-value + label {
+      top: 0.4rem;
+      font-size: 0.72rem;
+      color: $indigo;
+    }
+  }
+
+  label {
+    position: absolute;
+    right: 1rem;
+    top: 0.85rem;
+    font-size: 0.9rem;
+    color: $text-muted;
+    pointer-events: none;
+    transition: top 0.2s ease, font-size 0.2s ease, color 0.2s ease;
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.85rem;
+    opacity: 0.4;
+    pointer-events: none;
+  }
+}
+
+// ─── Submit button ────────────────────────────────────────
 .modal-submit {
-  margin-top: 0.5rem;
-  padding: 0.65rem;
-  background: #6366f1;
+  margin-top: 0.25rem;
+  padding: 0.8rem;
+  background: linear-gradient(135deg, $indigo 0%, #818cf8 100%);
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: transform 0.15s, box-shadow 0.15s;
 
-  &:hover { background: #4f46e5; }
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgba(255,255,255,0.25) 50%,
+      transparent 60%
+    );
+    transform: translateX(-100%);
+    transition: transform 0s;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(99,102,241,0.45);
+
+    &::before {
+      transform: translateX(200%);
+      transition: transform 0.55s ease;
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &.loading {
+    pointer-events: none;
+    opacity: 0.8;
+  }
+
+  .btn-arrow {
+    font-size: 1.1rem;
+    transition: transform 0.2s;
+  }
+
+  &:hover .btn-arrow {
+    transform: translateX(-3px);
+  }
 }
 
+// ─── Spinner ──────────────────────────────────────────────
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ─── Messages ─────────────────────────────────────────────
 .modal-error {
-  color: #f87171;
-  font-size: 0.85rem;
-  margin: 0;
+  color: $error;
+  font-size: 0.83rem;
+  margin: -0.2rem 0 0;
+  padding: 0.5rem 0.75rem;
+  background: rgba(244,63,94,0.08);
+  border-radius: 7px;
+  border-right: 2px solid $error;
 }
 
 .modal-success {
-  color: #4ade80;
-  font-size: 0.85rem;
-  margin: 0;
+  color: $success;
+  font-size: 0.83rem;
+  margin: -0.2rem 0 0;
+  padding: 0.5rem 0.75rem;
+  background: rgba(34,211,238,0.08);
+  border-radius: 7px;
+  border-right: 2px solid $success;
 }
 
+// ─── Links & misc ─────────────────────────────────────────
 .modal-link {
   background: none;
   border: none;
-  color: #6366f1;
+  color: $indigo;
   cursor: pointer;
   font-size: 0.85rem;
   padding: 0;
-  text-decoration: underline;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s;
+
+  &:hover { color: lighten($indigo, 10%); text-decoration: underline; }
 }
 
 .forgot-password {
   font-size: 0.82rem;
-  color: #94a3b8;
+  color: $text-dim;
   cursor: pointer;
   text-align: center;
+  align-self: center;
+  transition: color 0.15s;
 
-  &:hover { color: #6366f1; }
+  &:hover { color: $indigo; }
 }
 
+.register-prompt {
+  text-align: center;
+  font-size: 0.82rem;
+  color: $text-muted;
+  margin: 0;
+}
+
+// ─── Animations ───────────────────────────────────────────
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 
 @keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
+  from { transform: translateY(24px) scale(0.97); opacity: 0; }
+  to   { transform: translateY(0) scale(1);       opacity: 1; }
 }

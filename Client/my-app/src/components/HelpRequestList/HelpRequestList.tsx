@@ -26,16 +26,16 @@ const HelpRequestList: FC<HelpRequestListProps> = ({ requests, onSelect }) => {
       setDisplayRequests(requests.filter(req => matchesSearch(req)));
       return;
     }
-  
+
     const timer = setTimeout(async () => {
       setLoading(true);
       try {
         const params = new URLSearchParams();
         if (selectedStatus) params.append('status', selectedStatus);
         if (selectedPriority) params.append('priority', selectedPriority);
-        if (selectedCity.trim()) params.append('city', selectedCity.trim()); 
-  
-        const { data } = await api.get(`/helpRequest/search?${params.toString()}`);        
+        if (selectedCity.trim()) params.append('city', selectedCity.trim());
+
+        const { data } = await api.get(`/helpRequest/search?${params.toString()}`);
         setDisplayRequests(data.filter((req: HelpRequest) => matchesSearch(req)));
       } catch (error) {
         console.error("שגיאה:", error);
@@ -43,10 +43,10 @@ const HelpRequestList: FC<HelpRequestListProps> = ({ requests, onSelect }) => {
         setLoading(false);
       }
     }, 300);
-  
+
     return () => clearTimeout(timer);
   }, [selectedStatus, selectedPriority, selectedCity, searchQuery, requests]);
-  
+
   function matchesSearch(req: HelpRequest) {
     if (!searchQuery.trim()) return true;
     const query = searchQuery.toLowerCase();
@@ -61,35 +61,60 @@ const HelpRequestList: FC<HelpRequestListProps> = ({ requests, onSelect }) => {
 
   return (
     <div className="HelpRequestList">
+
+      <div className="list-header">
+        <div className="header-icon">🆘</div>
+        <h2>בקשות <span>עזרה</span></h2>
+        {!loading && (
+          <span className="count-badge">{displayRequests.length} בקשות</span>
+        )}
+      </div>
+
       <div className="search-container">
-        <select value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)} className="status-select">
+        <select
+          value={selectedStatus}
+          onChange={(e) => setSelectedStatus(e.target.value)}
+          className="status-select">
           <option value="">כל הסטטוסים</option>
           <option value="ממתין">ממתין</option>
           <option value="בטיפול">בטיפול</option>
           <option value="הסתיים">הסתיים</option>
         </select>
 
-        <select value={selectedPriority} onChange={(e) => setSelectedPriority(e.target.value)} className="priority-select">
+        <div className="filter-divider" />
+
+        <select
+          value={selectedPriority}
+          onChange={(e) => setSelectedPriority(e.target.value)}
+          className="priority-select">
           <option value="">כל הדחיפויות</option>
-          <option value="נמוכה">נמוכה</option>
-          <option value="בינונית">בינונית</option>
-          <option value="גבוהה">גבוהה</option>
-          <option value="קריטית">קריטית</option>
+          <option value="נמוכה">🟢 נמוכה</option>
+          <option value="בינונית">🟡 בינונית</option>
+          <option value="גבוהה">🔴 גבוהה</option>
+          <option value="קריטית">🚨 קריטית</option>
         </select>
 
-        <input 
-          type="text" 
-          placeholder="סנן לפי עיר..." 
-          value={selectedCity} 
-          onChange={(e) => setSelectedCity(e.target.value)} 
+        <div className="filter-divider" />
+
+        <input
+          type="text"
+          placeholder="סנן לפי עיר..."
+          value={selectedCity}
+          onChange={(e) => setSelectedCity(e.target.value)}
           className="city-input"
         />
       </div>
 
       {loading ? (
-        <div className="loading">טוען מהשרת...</div>
+        <div className="loading">
+          <div className="spinner" />
+          <span>טוען מהשרת...</span>
+        </div>
       ) : displayRequests.length === 0 ? (
-        <div className="no-results">לא נמצאו בקשות מתאימות.</div>
+        <div className="no-results">
+          <div className="empty-icon">🔍</div>
+          <p>לא נמצאו בקשות מתאימות.</p>
+        </div>
       ) : (
         <ul>
           {displayRequests.map((r, index) => (

@@ -6,10 +6,14 @@ import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import volunteerReducer from './redux/slices/volunteerSlice'
+// שינוי: ייבוא הרדוסר החדש של הבקשות
+import requestsReducer from './redux/slices/requestsSlice' 
 
 const store = configureStore({
     reducer: {
-        volunteer: volunteerReducer
+        volunteer: volunteerReducer,
+        // שינוי: הוספת רדוסר הבקשות לסטור כדי ששדות ה-useSelector בנב-בר יעבדו ללא שגיאות
+        requests: requestsReducer 
     }
 })
 

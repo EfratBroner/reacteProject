@@ -1,9 +1,11 @@
 import { type FC, useState, useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import './HelpRequestDetails.scss';
 import type { HelpRequest } from '../../models/helpRequest.model';
-import type { RootState } from '../../main';
+import type { RootState, AppDispatch } from '../../main';
+// שינוי: ייבוא האקשן removeHelpRequest החדש במקום updateHelpRequest
+import { addHelpRequest, removeHelpRequest } from '../../redux/slices/requestsSlice';
 import api from '../../api';
 
 interface HelpRequestDetailsProps {
@@ -20,6 +22,7 @@ const priorityColor: Record<string, string> = {
 
 const HelpRequestDetails: FC<HelpRequestDetailsProps> = ({ request, onBack }) => {
   const volunteer = useSelector((state: RootState) => state.volunteer.volunteer);
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const [taken, setTaken] = useState(false);
   const [status, setStatus] = useState(request.status);
@@ -38,15 +41,42 @@ const HelpRequestDetails: FC<HelpRequestDetailsProps> = ({ request, onBack }) =>
       navigate('/login');
       return;
     }
-    await api.put(`/helpRequest/${request._id}/${volunteer._id}`);
-    setStatus('בטיפול');
-    setTaken(true);
+    
+    try {
+      await api.put(`/helpRequest/${request._id}/${volunteer._id}`);
+      
+      setStatus('בטיפול');
+      setTaken(true);
+
+      const updatedRequest: HelpRequest = {
+        ...request,
+        status: 'בטיפול',
+        volunteerId: volunteer._id
+      };
+
+      dispatch(addHelpRequest(updatedRequest));
+
+    } catch (err) {
+      console.error('שגיאה בלקיחת הבקשה', err);
+    }
   };
 
   const handleDone = async () => {
     if (!volunteer) return;
-    await api.put(`/helpRequest/${request._id}/${volunteer._id}`);
-    setStatus('הסתיים');
+    
+    try {
+      // עדכון השרת שהבקשה הסתיימה
+      await api.put(`/helpRequest/${request._id}/${volunteer._id}`);
+      
+      // עדכון הסטייט המקומי להצגה בעמוד הנוכחי
+      setStatus('הסתיים');
+
+      // שינוי: קריאה לאקשן המחיקה כדי להסיר אותה מהסטור ומהפעמון של הנב-בר באותו הרגע
+      dispatch(removeHelpRequest(request._id));
+
+    } catch (err) {
+      console.error('שגיאה בסיום הבקשה', err);
+    }
   };
 
   const cardStyle = useMemo(() => {

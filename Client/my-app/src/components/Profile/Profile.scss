@@ -1,35 +1,37 @@
 // איפוס גלובלי קטן למניעת שוליים כפולים מה-body
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
-    overflow: hidden; 
-  }
-  
-  .profile-page-viewport {
+    overflow: hidden;
+}
+
+.profile-page-viewport {
     width: 100vw;
     // שימוש ב-calc שמפחית בדיוק את גובה ה-Navbar (נניח 70px) כדי למנוע גלילה לחלוטין
-    height: calc(100vh); 
+    height: auto;
     box-sizing: border-box;
     background: radial-gradient(circle at top left, #121324 0%, #080911 100%);
     padding: 1rem 2rem; // צמצום השוליים למעלה ולצדדים למינימום יפה
-    overflow: hidden; 
+    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
     direction: rtl;
-  }
-  
-  .profile-dashboard-layout {
+}
+
+.profile-dashboard-layout {
     display: grid;
-    grid-template-columns: 1.8fr 1fr; 
+    grid-template-columns: 1.8fr 1fr;
     gap: 1.2rem; // צמצום המרווחים בין הכרטיסיות כדי שהכל ייכנס
     width: 100%;
     max-width: 1250px;
     height: 100%; // תופס בדיוק את הנטו של ה-viewport הפנוי
     align-items: stretch;
-  }
-  
-  .dashboard-main-panel, .dashboard-side-form {
+}
+
+.dashboard-main-panel,
+.dashboard-side-form {
     background: rgba(16, 18, 35, 0.65);
     border: 1px solid rgba(255, 255, 255, 0.06);
     backdrop-filter: blur(20px);
@@ -39,34 +41,37 @@ html, body {
     flex-direction: column;
     justify-content: space-between; // גורם לתוכן להתפרס בצורה אופטימלית בלי לחרוג
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-  }
-  
-  .panel-title-wrapper {
+}
+
+.panel-title-wrapper {
     margin-bottom: 0.5rem;
+
     h2 {
-      color: #fff;
-      font-size: 1.25rem;
-      font-weight: 800;
-      margin: 0;
+        color: #fff;
+        font-size: 1.25rem;
+        font-weight: 800;
+        margin: 0;
     }
-    p, .subtitle-tag {
-      color: #64748b;
-      font-size: 0.75rem;
-      margin-top: 2px;
+
+    p,
+    .subtitle-tag {
+        color: #64748b;
+        font-size: 0.75rem;
+        margin-top: 2px;
     }
-  }
-  
-  /* ─── פאנל שמאלי (מדדים) ─── */
-  .widgets-grid {
+}
+
+/* ─── פאנל שמאלי (מדדים) ─── */
+.widgets-grid {
     display: grid;
     grid-template-columns: 1fr 1.2fr;
     gap: 1rem;
     flex: 1;
     align-items: center;
     margin: 0.5rem 0;
-  }
-  
-  .widget-card {
+}
+
+.widget-card {
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.04);
     border-radius: 12px;
@@ -76,52 +81,55 @@ html, body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-  
+
     h3 {
-      color: #94a3b8;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-top: 0;
-      margin-bottom: 0.5rem;
-      align-self: flex-start;
+        color: #94a3b8;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        align-self: flex-start;
     }
-  }
-  
-  .gauge-widget {
+}
+
+.gauge-widget {
     .gauge-outer {
-      position: relative;
-      width: 150px;
-      height: 75px;
+        position: relative;
+        width: 150px;
+        height: 75px;
     }
+
     .gauge-text-overlay {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-  
-      .huge-number {
-        font-size: 2.1rem;
-        font-weight: 900;
-        color: #fff;
-        line-height: 1;
-      }
-      .mini-label {
-        font-size: 0.65rem;
-        color: #475569;
-      }
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .huge-number {
+            font-size: 2.1rem;
+            font-weight: 900;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .mini-label {
+            font-size: 0.65rem;
+            color: #475569;
+        }
     }
+
     .status-caption {
-      font-size: 0.8rem;
-      color: #22d3ee;
-      margin-top: 0.5rem;
-      margin-bottom: 0;
+        font-size: 0.8rem;
+        color: #22d3ee;
+        margin-top: 0.5rem;
+        margin-bottom: 0;
     }
-  }
-  
-  .trophy-room-shelf {
+}
+
+.trophy-room-shelf {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 0.5rem;
@@ -130,60 +138,82 @@ html, body {
     padding: 0.8rem;
     border-radius: 10px;
     border-bottom: 3px solid #3b82f6;
-  }
-  
-  .trophy-box {
+}
+
+.trophy-box {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 0.4rem;
     border-radius: 6px;
-    
-    .icon-wrapper { font-size: 1.4rem; }
-    span { font-size: 0.68rem; color: #94a3b8; }
-  
+
+    .icon-wrapper {
+        font-size: 1.4rem;
+    }
+
+    span {
+        font-size: 0.68rem;
+        color: #94a3b8;
+    }
+
     &.active-trophy {
-      background: rgba(99, 102, 241, 0.08);
-      border: 1px solid rgba(99, 102, 241, 0.2);
-      span { color: #fff; }
+        background: rgba(99, 102, 241, 0.08);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+
+        span {
+            color: #fff;
+        }
     }
+
     &.locked-trophy {
-      opacity: 0.2;
-      filter: grayscale(1);
+        opacity: 0.2;
+        filter: grayscale(1);
     }
-  }
-  
-  .cup-box {
+}
+
+.cup-box {
     grid-column: span 3;
     background: linear-gradient(135deg, rgba(234, 179, 8, 0.1), rgba(251, 191, 36, 0.02));
     border: 1px solid rgba(234, 179, 8, 0.25) !important;
     padding: 0.5rem;
-    
-    .cup-icon { font-size: 1.8rem !important; }
-    .cup-title { color: #fbbf24; font-weight: 700; font-size: 0.8rem; }
-  }
-  
-  .activity-footer-log {
+
+    .cup-icon {
+        font-size: 1.8rem !important;
+    }
+
+    .cup-title {
+        color: #fbbf24;
+        font-weight: 700;
+        font-size: 0.8rem;
+    }
+}
+
+.activity-footer-log {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(255,255,255,0.01);
+    background: rgba(255, 255, 255, 0.01);
     padding: 0.5rem 0.8rem;
     border-radius: 6px;
     border-right: 3px solid #6366f1;
-    p { font-size: 0.7rem; color: #64748b; margin: 0; }
-  }
-  
-  /* ─── פאנל ימני (הטופס) ─── */
-  .side-form-element {
+
+    p {
+        font-size: 0.7rem;
+        color: #64748b;
+        margin: 0;
+    }
+}
+
+/* ─── פאנל ימני (הטופס) ─── */
+.side-form-element {
     display: flex;
     flex-direction: column;
     gap: 0.8rem; // צמצום המרווחים בטופס
     flex: 1;
     justify-content: center;
-  }
-  
-  .form-readonly-badge {
+}
+
+.form-readonly-badge {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -191,15 +221,24 @@ html, body {
     border: 1px dashed rgba(255, 255, 255, 0.08);
     padding: 0.5rem;
     border-radius: 6px;
+
     .txt {
-      display: flex;
-      flex-direction: column;
-      label { font-size: 0.65rem; color: #475569; }
-      span { color: #94a3b8; font-size: 0.8rem; }
+        display: flex;
+        flex-direction: column;
+
+        label {
+            font-size: 0.65rem;
+            color: #475569;
+        }
+
+        span {
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
     }
-  }
-  
-  .custom-input-container {
+}
+
+.custom-input-container {
     position: relative;
     display: flex;
     align-items: center;
@@ -208,52 +247,65 @@ html, body {
     border-radius: 8px;
     padding: 0 0.6rem;
     height: 42px; // קצת יותר נמוך כדי לשמור על פרופורציות מסך
-  
-    .field-icon-left { font-size: 0.9rem; margin-left: 0.5rem; }
+
+    .field-icon-left {
+        font-size: 0.9rem;
+        margin-left: 0.5rem;
+    }
+
     .input-field-relative {
-      position: relative;
-      flex: 1;
-      height: 100%;
-      
-      input {
-        width: 100%;
+        position: relative;
+        flex: 1;
         height: 100%;
-        background: transparent;
-        border: none;
-        outline: none;
-        color: #fff;
-        font-size: 0.85rem;
-        padding-top: 8px;
-  
-        &:focus + label, &:not(:placeholder-shown) + label {
-          transform: translateY(-8px) scale(0.78);
-          color: #22d3ee;
+
+        input {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 0.85rem;
+            padding-top: 8px;
+
+            &:focus+label,
+            &:not(:placeholder-shown)+label {
+                transform: translateY(-8px) scale(0.78);
+                color: #22d3ee;
+            }
         }
-      }
-      label {
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #475569;
-        font-size: 0.8rem;
-      }
+
+        label {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #475569;
+            font-size: 0.8rem;
+        }
     }
-  }
-  
-  .form-submit-row {
+}
+
+.form-submit-row {
     margin-top: 0.2rem;
+
     .save-btn {
-      width: 100%;
-      height: 38px;
-      background: linear-gradient(135deg, #22d3ee, #6366f1);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 0.85rem;
-      cursor: pointer;
+        width: 100%;
+        height: 38px;
+        background: linear-gradient(135deg, #22d3ee, #6366f1);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
     }
-  }
-  
-  .error-hint-text { color: #ef4444; font-size: 0.65rem; position: absolute; bottom: -14px; right: 4px; }
+}
+
+.error-hint-text {
+    color: #ef4444;
+    font-size: 0.65rem;
+    position: absolute;
+    bottom: -14px;
+    right: 4px;
+}

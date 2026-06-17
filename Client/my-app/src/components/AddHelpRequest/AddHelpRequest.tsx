@@ -92,7 +92,6 @@ const AddHelpRequest: FC<AddHelpRequestProps> = ({ onSuccess }) => {
           <div className="modal-overlay" onClick={close}>
             <form onSubmit={formik.handleSubmit} className="request-form" onClick={e => e.stopPropagation()}>
 
-              {/* Header strip */}
               <div className="form-header">
                 <div className="form-header__badge">SOS</div>
                 <div>
@@ -104,7 +103,6 @@ const AddHelpRequest: FC<AddHelpRequestProps> = ({ onSuccess }) => {
 
               <div className="form-grid">
 
-                {/* Description — full width */}
                 <div className="form-group full">
                   <label htmlFor="description">
                     <span className="label-icon">📝</span> תיאור הבקשה
@@ -163,7 +161,6 @@ const AddHelpRequest: FC<AddHelpRequestProps> = ({ onSuccess }) => {
                     <div className="err">{formik.errors.location.details}</div>}
                 </div>
 
-                {/* Priority — pill selector */}
                 <div className="form-group full">
                   <label><span className="label-icon">⚡</span> רמת דחיפות</label>
                   <div className="priority-pills">

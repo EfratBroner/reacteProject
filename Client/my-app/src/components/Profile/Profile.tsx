@@ -173,11 +173,6 @@ const Profile: FC = () => {
                             </div>
                         </div>
                     </div>
-
-                    <div className="activity-footer-log">
-                        <span className="log-icon">ℹ️</span>
-                        <p>הנתונים מסונכרנים אוטומטית מול ה-Database ומבוססים על קריאות בסטטוס "הסתיים".</p>
-                    </div>
                 </div>
 
                 <div className="dashboard-side-form">

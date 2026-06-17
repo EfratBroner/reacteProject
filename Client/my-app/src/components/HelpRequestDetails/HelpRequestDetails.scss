@@ -9,16 +9,16 @@ $accent: #6366f1;
 @mixin badge($bg, $color) {
   background: $bg;
   color: $color;
-  padding: 4px 12px;
+  padding: 4px 10px; 
   border-radius: 20px;
-  font-size: 0.75rem;
+  font-size: 0.72rem; 
   font-weight: 700;
   letter-spacing: 0.5px;
   display: inline-block;
 }
 
 .HelpRequestDetails {
-  height: 100vh;
+  height: auto;
   width: 100%;
   background: $dark;
   direction: rtl;
@@ -26,11 +26,12 @@ $accent: #6366f1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  margin-top: 8px;
 
   .mission-header {
     position: relative;
     flex-shrink: 0;
-    padding: 20px 32px 16px;
+    padding: 18px 28px 14px; // הקטנת פאדינג קלה בכותרת
     background: linear-gradient(135deg, #1e2235 0%, #252a40 100%);
     border-bottom: 1px solid $border;
 
@@ -44,12 +45,12 @@ $accent: #6366f1;
     }
 
     .mission-label {
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       font-weight: 700;
       letter-spacing: 2px;
       color: var(--priority-color, #{$accent});
       text-transform: uppercase;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -63,14 +64,14 @@ $accent: #6366f1;
     }
 
     h2 {
-      font-size: 1.3rem;
+      font-size: 1.25rem; // הקטנת כותרת ראשית
       font-weight: 700;
       color: $text;
-      margin: 0 0 4px;
+      margin: 0 0 2px;
     }
 
     .volunteer-greeting {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: $muted;
       margin: 0;
     }
@@ -79,10 +80,10 @@ $accent: #6366f1;
   .mission-body {
     flex: 1;
     min-height: 0;
-    padding: 16px 32px;
+    padding: 20px 28px; // התאמת מרווחים פנימיים
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
+    gap: 20px; // 🌟 שינוי מ-space-evenly למרווח קבוע ונשלט בין הבלוקים
     border-bottom: 1px solid $border;
   }
 
@@ -92,6 +93,7 @@ $accent: #6366f1;
     border-right: 3px solid var(--priority-color, #{$accent});
     border-radius: 10px;
     padding: 12px 16px;
+    margin-bottom: 10px; // 🌟 מוסיף רווח מובהק מתחת לתיאור, מונע הצמדה למיקום ולטלפון
 
     .block-label {
       font-size: 0.65rem;
@@ -103,7 +105,7 @@ $accent: #6366f1;
     }
 
     p {
-      font-size: 0.9rem;
+      font-size: 0.88rem; // הקטנת גופן התיאור לקריאות מעולה
       color: $text;
       line-height: 1.5;
       margin: 0;
@@ -113,21 +115,21 @@ $accent: #6366f1;
   .info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    gap: 12px; // 🌟 הגדלת המרווח הפנימי של הגריד לטובת אוויר בין התאים
 
     .info-cell {
       background: $surface;
       border: 1px solid $border;
       border-radius: 10px;
-      padding: 10px 14px;
+      padding: 8px 12px; // הקטנת פאדינג קלה כדי לצמצם את גודל התא
       transition: border-color 0.2s;
 
       &:hover { border-color: $accent; }
 
-      .cell-icon { font-size: 1rem; margin-bottom: 4px; display: block; }
+      .cell-icon { font-size: 0.95rem; margin-bottom: 2px; display: block; }
 
       .cell-label {
-        font-size: 0.63rem;
+        font-size: 0.6rem; // הקטנת כותרות התאים
         font-weight: 700;
         letter-spacing: 1px;
         color: $muted;
@@ -137,7 +139,7 @@ $accent: #6366f1;
       }
 
       .cell-value {
-        font-size: 0.88rem;
+        font-size: 0.82rem; // הקטנת ערך הטקסט (טלפון, עיר וכו')
         color: $text;
         font-weight: 500;
         display: block;
@@ -149,13 +151,14 @@ $accent: #6366f1;
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 14px;
+    padding: 8px 12px; // הקטנת פאדינג בשורת הסטטוס
     background: $surface;
     border: 1px solid $border;
     border-radius: 10px;
+    margin-top: 5px; // יצירת ריווח קל מעל שורת הסטטוס
 
     .row-label {
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       font-weight: 700;
       color: $muted;
       letter-spacing: 1px;
@@ -163,7 +166,7 @@ $accent: #6366f1;
     }
 
     .assigned-name {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: $muted;
       margin-right: auto;
     }
@@ -187,17 +190,17 @@ $accent: #6366f1;
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
-    padding: 14px 32px;
+    padding: 12px 28px; // התאמת כפתורי הפעולה בתחתית
     background: rgba(15, 17, 23, 0.6);
 
     .back-btn {
-      padding: 8px 18px;
+      padding: 6px 14px; // כפתור חזור קומפקטי יותר
       background: transparent;
       color: $muted;
       border: 1px solid $border;
       border-radius: 10px;
       cursor: pointer;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       transition: all 0.2s;
 
       &:hover { border-color: $text; color: $text; }
@@ -210,13 +213,13 @@ $accent: #6366f1;
     }
 
     .take-btn {
-      padding: 8px 22px;
+      padding: 7px 18px; // הקטנת כפתורי פעולה עיקריים
       background: linear-gradient(135deg, #6366f1, #8b5cf6);
       color: white;
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      font-size: 0.88rem;
+      font-size: 0.82rem;
       font-weight: 600;
       box-shadow: 0 4px 15px rgba(99,102,241,0.4);
       transition: all 0.2s;
@@ -227,13 +230,13 @@ $accent: #6366f1;
     }
 
     .done-btn {
-      padding: 8px 22px;
+      padding: 7px 18px;
       background: linear-gradient(135deg, #ef4444, #dc2626);
       color: white;
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      font-size: 0.88rem;
+      font-size: 0.82rem;
       font-weight: 600;
       box-shadow: 0 4px 15px rgba(239,68,68,0.4);
       transition: all 0.2s;

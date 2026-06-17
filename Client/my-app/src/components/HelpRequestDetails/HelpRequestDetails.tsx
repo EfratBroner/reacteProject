@@ -60,7 +60,6 @@ const HelpRequestDetails: FC<HelpRequestDetailsProps> = ({ request, onBack }) =>
       <div className="mission-header">
         <div className="mission-label">בקשת התנדבות</div>
         <h2>פרטי המשימה</h2>
-        {volunteer && <p className="volunteer-greeting">שלום, {volunteer.firstName} {volunteer.lastName} — תודה שאתה כאן 🤝</p>}
       </div>
 
       <div className="mission-body">

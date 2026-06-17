@@ -78,7 +78,6 @@ const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
 
   const handleCloseLogin = () => { setShowLogin(false); navigate('/'); };
   const handleCloseRegister = () => { setShowRegister(false); navigate('/'); };
-  const handleCloseProfile = () => { setShowProfile(false); navigate('/'); };
 
   return (
     <>
@@ -103,16 +102,10 @@ const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
             <>
               <button
                 className="navbar__btn navbar__btn--outline"
-                onClick={() => { setShowLogin(true); setShowRegister(false); navigate('/login'); }}
-              >
-                התחברות
-              </button>
+                onClick={() => { setShowLogin(true); setShowRegister(false); navigate('/login'); }}>התחברות</button>
               <button
                 className="navbar__btn navbar__btn--primary"
-                onClick={() => { setShowRegister(true); setShowLogin(false); navigate('/register'); }}
-              >
-                הרשמה
-              </button>
+                onClick={() => { setShowRegister(true); setShowLogin(false); navigate('/register'); }}>הרשמה</button>
             </>
           ) : (
             <>

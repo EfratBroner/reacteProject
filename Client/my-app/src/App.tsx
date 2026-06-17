@@ -2,6 +2,7 @@ import './App.scss'
 import { Routes, Route } from 'react-router-dom'
 import Main from './components/main/main'
 import HelpRequestDetailsPage from './components/HelpRequestDetails/HelpRequestDetailsPage'
+import Profile from './components/Profile/Profile'
 
 function App() {
   return (
@@ -9,10 +10,10 @@ function App() {
       <Route path="/" element={<Main />} />
       <Route path="/login" element={<Main />} />
       <Route path="/register" element={<Main />} />
-      <Route path="/profile" element={<Main />} />
+      <Route path="/profile" element={<Profile />} />
       <Route path="/details/:id" element={<HelpRequestDetailsPage />} />
     </Routes>
   )
 }
 
-export default App
+export default App;

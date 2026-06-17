@@ -83,9 +83,19 @@ const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
   return (
     <>
       <nav className="navbar">
-        <div className="navbar__brand">
-          <span className="brand-emoji">🤝</span>
-          מערכת מתנדבים
+        <div className="navbar__brand" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="brand-logo-svg">
+            <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" stroke="url(#logoGrad)" strokeWidth="2" />
+            <path d="m10 10 2-2 2 2M12 8v8" stroke="url(#logoGrad)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <defs>
+              <linearGradient id="logoGrad" x1="2" y1="2" x2="22" y2="22">
+                <stop offset="0%" stopColor="#a78bfa" />
+                <stop offset="50%" stopColor="#6366f1" />
+                <stop offset="100%" stopColor="#38bdf8" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <span>ידידים - מערכת פנימית</span>
         </div>
 
         <div className="navbar__actions">
@@ -109,14 +119,12 @@ const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
               <span className="navbar__greeting">שלום, {volunteer.firstName}! 👋</span>
               <button
                 className="navbar__btn navbar__btn--outline"
-                onClick={() => { setShowProfile(true); navigate('/profile'); }}
-              >
+                onClick={() => navigate('/profile')} >
                 הפרופיל שלי
               </button>
               <button
                 className="navbar__btn navbar__btn--danger"
-                onClick={() => dispatch(clearVolunteer())}
-              >
+                onClick={() => dispatch(clearVolunteer())}>
                 התנתק
               </button>
             </>
@@ -129,9 +137,6 @@ const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
       )}
       {showRegister && (
         <Register volunteer={null} onRegisterSuccess={handleRegisterSuccess} onNavigateToLogin={switchToLogin} onClose={handleCloseRegister} />
-      )}
-      {showProfile && volunteer && (
-        <Register volunteer={volunteer} onRegisterSuccess={handleRegisterSuccess} onNavigateToLogin={switchToLogin} onClose={handleCloseProfile} />
       )}
 
       {volunteer?.role === 'admin' && (

@@ -4,8 +4,6 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const volunteer = require('../models/volunteer.model.js');
 
-// let numID = 2000
-
 class VolunteerService extends Service {
     constructor() {
         super(repo)
@@ -90,16 +88,19 @@ class VolunteerService extends Service {
 
     async findByEmail(email, password){
         try{
-           const volunteer = await this.repo.findByEmail(email);
-           console.log('volunteer from DB:', volunteer);
-           console.log('password received:', password);
-           console.log('password in DB:', volunteer?.password);
-           if(!volunteer)
-               return {success: false, message: "האימייל לא קיים"}
-           if(volunteer.password===password)
-               return {success: true, message: "הסיסמה תקינה", volunteer}
-           else
-               return {success: false, message: "שגויה הסיסמה"}
+            let volunteer = await this.repo.findByEmail(email);
+            
+            if(!volunteer)
+                return {success: false, message: "האימייל לא קיים"}
+                
+            if(volunteer.password === password) {
+                if (typeof volunteer.populate === 'function') {
+                    await volunteer.populate('completedRequests');
+                }
+                return {success: true, message: "הסיסמה תקינה", volunteer}
+            } else {
+                return {success: false, message: "שגויה הסיסמה"}
+            }
         }
         catch(error){
             console.log(error);
@@ -107,12 +108,18 @@ class VolunteerService extends Service {
         }
     }
 
-     async ById(id) {
-        try{
-        return await this.repo.ById(id);}
+    async ById(id) {
+        try {
+            const volunteer = await this.repo.ById(id);
+            if (volunteer && typeof volunteer.populate === 'function') {
+                await volunteer.populate('completedRequests');
+            }
+            return volunteer;
+        }
         catch(err){
             console.log(err)
-            throw Error('error getting the data by id')}
+            throw Error('error getting the data by id')
+        }
     }
 }
 

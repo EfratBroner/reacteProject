@@ -7,4 +7,5 @@ export interface Volunteer {
     phone: string;
     specialties: string[];
     role: string;
+    completedRequests?: any[];
 }

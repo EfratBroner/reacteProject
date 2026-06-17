@@ -23,6 +23,8 @@ class Controller {
             next(e);
         }
     }
+    
+    
 }
 
 module.exports = Controller;

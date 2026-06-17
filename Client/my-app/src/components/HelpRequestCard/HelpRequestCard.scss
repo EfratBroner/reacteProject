@@ -1,85 +1,119 @@
-@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap');
 
 .help-request-card {
   font-family: 'Heebo', sans-serif;
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 16px 18px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+  background: rgba(20, 20, 43, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-right: 5px solid #3498db;
+  border-radius: 16px;
+  padding: 22px 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   direction: rtl;
-  border-right: 4px solid #3498db; // fallback — overridden by inline style
   position: relative;
-  overflow: hidden;
+  
+  // 🌟 שינוי מ-hidden ל-visible כדי למנוע חיתוך של גובה הכרטיס והצללים שלו בריחוף
+  overflow: visible; 
+  
+  // מבטיח שהכרטיס יתרחב טבעית לפי התוכן שלו
+  height: auto; 
+  display: flex;
+  flex-direction: column;
 
-  // subtle shimmer on the top edge
+  // אפקט תאורה אחורית פנימית עדינה
   &::before {
     content: '';
     position: absolute;
-    top: 0; right: 0; left: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-    opacity: 0;
-    transition: opacity 0.25s;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
+    pointer-events: none;
   }
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
-
-    &::before { opacity: 1; }
+    transform: translateY(-6px) scale(1.02); // קפיצה קלה קדימה בריחוף
+    border-color: rgba(99, 102, 241, 0.3);
+    box-shadow: 
+      0 12px 38px rgba(0, 0, 0, 0.4),
+      0 0 20px rgba(99, 102, 241, 0.1); // הילה זוהרת מסביב לכרטיסייה שנבחרה
   }
 
   &:active {
-    transform: translateY(0);
+    transform: translateY(-2px) scale(1);
   }
 
   .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
 
     .priority {
-      font-size: 0.78rem;
+      font-size: 0.85rem; // הגדלת גודל הגופן של הדחיפות
       font-weight: 700;
-      padding: 4px 12px;
-      border-radius: 999px;
+      padding: 6px 14px; // תג מוגדל וקריא יותר
+      border-radius: 30px;
       letter-spacing: 0.3px;
-      // color + background set via inline style
+      box-shadow: inset 0 1px 4px rgba(255, 255, 255, 0.05);
     }
 
     .city {
-      font-size: 0.88rem;
-      color: #94a3b8;
-      font-weight: 500;
+      font-size: 1.05rem; // הגדלת שם העיר
+      color: #e2e8f0; // טקסט בהיר וברור
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
   }
 
   .description {
-    font-size: 0.97rem;
-    color: #1e293b;
-    margin-bottom: 14px;
+    font-size: 1.05rem; // הגדלת התיאור של התקלה/בקשה
+    color: #cbd5e1; // צבע קריא מאוד על רקע כהה
+    margin-bottom: 20px;
     line-height: 1.6;
+    font-weight: 400;
+    min-height: 50px; // מבטיח אחידות בגובה התיאור בין הכרטיסיות
+    display: -webkit-box;
+    -webkit-line-clamp: 3; // חותך טקסט ארוך מדי אחרי 3 שורות עם שלוש נקודות (...)
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .card-footer {
     display: flex;
     justify-content: space-between;
-    font-size: 0.83rem;
+    align-items: center;
+    font-size: 0.95rem; // הגדלת נתוני הפוטר
     color: #94a3b8;
-    border-top: 1px solid #f1f5f9;
-    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 14px;
 
-    .phone::before  { content: '📞 '; }
-    .people::before { content: '👥 '; }
+    .phone {
+      color: #38bdf8; // הבלטת מספר הטלפון בצבע ציאן זוהר
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      
+      &::before {
+        content: '📞 ';
+        font-size: 1rem;
+        margin-left: 4px;
+      }
+    }
 
     .status {
-      font-weight: 600;
-      padding: 2px 10px;
-      border-radius: 999px;
-      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
   }
 }

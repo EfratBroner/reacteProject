@@ -131,3 +131,25 @@
     padding: 0;
   }
 }
+
+@keyframes ring {
+  0% { transform: rotate(0); }
+  5% { transform: rotate(15deg); }
+  10% { transform: rotate(-15deg); }
+  15% { transform: rotate(10deg); }
+  20% { transform: rotate(-10deg); }
+  25% { transform: rotate(5deg); }
+  30% { transform: rotate(-5deg); }
+  35% { transform: rotate(0); }
+  100% { transform: rotate(0); }
+}
+
+.navbar__btn--bell {
+  display: inline-block;
+  transition: transform 0.2s ease;
+
+  // הפעמון יתנדנד במשך 2 שניות בלולאה אינסופית רק כשיש משימות
+  &.is-ringing {
+    animation: ring 2s infinite ease-in-out;
+  }
+}

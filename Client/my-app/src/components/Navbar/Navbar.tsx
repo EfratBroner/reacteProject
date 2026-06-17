@@ -153,9 +153,8 @@ const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
                         {myActiveRequests.map((req: HelpRequest) => (
                           <div 
                             key={req._id} 
-                            onClick={() => handleRequestCardClick(req)} // תיקון: העברת req המלא
-                            style={{ backgroundColor: '#f9f9f9', border: '1px solid #ddd', borderRadius: '4px', padding: '6px 8px', cursor: 'pointer', textAlign: 'right', fontSize: '0.8rem' }}
-                          >
+                            onClick={() => handleRequestCardClick(req)} 
+                            style={{ backgroundColor: '#f9f9f9', border: '1px solid #ddd', borderRadius: '4px', padding: '6px 8px', cursor: 'pointer', textAlign: 'right', fontSize: '0.8rem' }}>
                             <div>📍 <strong>מיקום:</strong> {req.location.city}</div>
                             <div>📞 <strong>טלפון:</strong> {req.phone}</div>
                             <div>⚠️ <strong>דחיפות:</strong> {req.priority}</div>

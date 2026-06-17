@@ -35,8 +35,6 @@ export default function Register({ onRegisterSuccess, onClose, onNavigateToLogin
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [isResettingPassword, setIsResettingPassword] = useState(false);
 
-  const isEditMode = !!volunteer;
-
   const addToast = useCallback((message: string, type: ToastType) => {
     const id = ++toastCounter;
     setToasts(prev => [...prev, { id, message, type }]);
@@ -85,7 +83,7 @@ export default function Register({ onRegisterSuccess, onClose, onNavigateToLogin
     onSubmit: async (values) => {
       const volunteerId = volunteer?._id;
 
-      if (isEditMode && volunteerId) {
+      if (volunteerId) {
         try {
           await api.put(`/volunteer/${volunteerId}`, {
             firstName: values.firstName,
@@ -153,7 +151,7 @@ export default function Register({ onRegisterSuccess, onClose, onNavigateToLogin
   const fields = [
     { name: 'firstName' as const, label: 'שם פרטי', icon: '👤' },
     { name: 'lastName' as const, label: 'שם משפחה', icon: '👤' },
-    { name: 'email' as const, label: 'אימייל', type: 'email', icon: '✉', readOnly: isEditMode },
+    { name: 'email' as const, label: 'אימייל', type: 'email', icon: '✉'},
     { name: 'phone' as const, label: 'טלפון', icon: '📱' },
     { name: 'specialties' as const, label: 'התמחויות (מופרדות בפסיקים)', icon: '⚡' },
   ];
@@ -193,11 +191,11 @@ export default function Register({ onRegisterSuccess, onClose, onNavigateToLogin
                   </defs>
                 </svg>
               </div>
-              <h2>{isEditMode ? 'הפרופיל שלי' : 'הרשמה'}</h2>
-              <p className="modal-subtitle">{isEditMode ? 'עדכון פרטי חשבון וניהול סיסמה' : 'הצטרף לצוות המתנדבים'}</p>
+              <h2>{'הרשמה'}</h2>
+              <p className="modal-subtitle">{'הצטרף לצוות המתנדבים'}</p>
             </div>
 
-            {fields.map(({ name, label, type = 'text', icon, readOnly }) => (
+            {fields.map(({ name, label, type = 'text', icon }) => (
               <div className="input-group" key={name}>
                 <input
                   type={type}
@@ -207,40 +205,14 @@ export default function Register({ onRegisterSuccess, onClose, onNavigateToLogin
                   value={formik.values[name] || ''}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  readOnly={readOnly}
-                  className={`${formik.values[name] ? 'has-value' : ''} ${readOnly ? 'input-readonly' : ''}`} />
+                  className={`${formik.values[name] ? 'has-value' : ''} ${''}`} />
                 <label htmlFor={name}>{label}</label>
                 <span className="input-icon">{icon}</span>
                 {formik.touched[name] && formik.errors[name] && (
                   <div className="field-error">{formik.errors[name]}</div>
                 )}
               </div>
-            ))}
-
-            {isEditMode ? (
-              <div className="profile-actions-wrapper">
-                <button
-                  type="button"
-                  className="modal-submit modal-submit--secondary"
-                  onClick={handleResetPassword}
-                  disabled={isResettingPassword}
-                >
-                  {isResettingPassword ? <span className="spinner" /> : 'עדכון סיסמה'}
-                </button>
-
-                <button type='submit' className='modal-submit' disabled={formik.isSubmitting}>
-                  {formik.isSubmitting ? (
-                    <span className="spinner" />
-                  ) : (
-                    <>
-                      <span>שמירת שינויים</span>
-                      <span className="btn-arrow">✓</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            ) : (
-              <>
+            ))} 
                 <button type='submit' className='modal-submit' disabled={formik.isSubmitting}>
                   {formik.isSubmitting ? (
                     <span className="spinner" />
@@ -258,8 +230,7 @@ export default function Register({ onRegisterSuccess, onClose, onNavigateToLogin
                     התחברות
                   </button>
                 </p>
-              </>
-            )}
+          
           </form>
         </div>
       </div>

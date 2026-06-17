@@ -69,6 +69,9 @@ const Profile: FC = () => {
                 });
 
                 addToast('הפרטים נשמרו בהצלחה! ✨', 'success');
+                setTimeout(() => {
+                    navigate('/');
+                }, 1500);
 
                 const updated = await api.get(`/volunteer/byEmail/${volunteer.email}`).then(r => r.data);
                 dispatch(setVolunteer(updated));

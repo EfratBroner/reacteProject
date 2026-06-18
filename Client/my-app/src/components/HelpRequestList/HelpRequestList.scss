@@ -159,29 +159,31 @@ $priority-critical: #ef4444;
 .search-container {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 28px;
-  padding: 14px 24px;
-  border-radius: 16px;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 10px 16px;
+  border-radius: 14px;
   background: $panel-bg;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1.5px solid $panel-border;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  flex-shrink: 0; // מונע מסרגל הסינון להתכווץ במקרה של עומס
+  flex-shrink: 0;
+  width: fit-content;
 
   .city-input {
-    flex: 1.5; // נותן לאינפוט הטקסט העירוני קצת יותר נפח
+    flex: 1.5;
     border: 1.5px solid rgba(255, 255, 255, 0.08);
     border-radius: 10px;
     outline: none;
     font-family: 'Heebo', sans-serif;
-    font-size: 0.95rem;
-    padding: 11px 16px;
+    font-size: 0.85rem;
+    padding: 8px 12px;
     background: rgba(0, 0, 0, 0.2);
     color: $slate-100;
     direction: rtl;
     transition: all 0.25s ease;
+    width: 140px;
 
     &::placeholder { color: $slate-500; }
 
@@ -199,13 +201,14 @@ $priority-critical: #ef4444;
     border-radius: 10px;
     outline: none;
     font-family: 'Heebo', sans-serif;
-    font-size: 0.95rem;
-    padding: 11px 16px;
+    font-size: 0.85rem;
+    padding: 8px 12px;
     background: rgba(0, 0, 0, 0.2);
     color: $slate-300;
     direction: rtl;
     cursor: pointer;
     appearance: none;
+    width: 120px;
     
     // חץ סינון מעוצב מחדש שמתאים למצב כהה
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");

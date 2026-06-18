@@ -86,6 +86,7 @@ const HelpRequestDetails: FC<HelpRequestDetailsProps> = ({ request, onBack }) =>
   }, [request.priority]); 
 
   return (
+    <div className="page-wrapper">
     <div className="HelpRequestDetails" style={cardStyle}>
       <div className="mission-header">
         <div className="mission-label">בקשת התנדבות</div>
@@ -151,6 +152,7 @@ const HelpRequestDetails: FC<HelpRequestDetailsProps> = ({ request, onBack }) =>
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 };

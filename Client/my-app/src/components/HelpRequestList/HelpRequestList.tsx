@@ -1,15 +1,21 @@
-import { useEffect, useState, type FC } from 'react';
+import { useEffect, useState, lazy, Suspense, type FC } from 'react';
 import './HelpRequestList.scss';
 import type { HelpRequest } from '../../models/helpRequest.model';
 import HelpRequestCard from '../HelpRequestCard/HelpRequestCard';
 import api from '../../api';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../main';
+
+const AddHelpRequest = lazy(() => import('../AddHelpRequest/AddHelpRequest'));
 
 interface HelpRequestListProps {
   requests: HelpRequest[];
   onSelect: (request: HelpRequest) => void;
+  onRefreshRequests: () => Promise<void>;
 }
 
-const HelpRequestList: FC<HelpRequestListProps> = ({ requests, onSelect }) => {
+const HelpRequestList: FC<HelpRequestListProps> = ({ requests, onSelect, onRefreshRequests }) => {
+  const isAdmin = useSelector((state: RootState) => state.volunteer.volunteer)?.role === 'admin';
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedStatus, setSelectedStatus] = useState<string>('');
   const [selectedPriority, setSelectedPriority] = useState<string>('');
@@ -65,9 +71,16 @@ const HelpRequestList: FC<HelpRequestListProps> = ({ requests, onSelect }) => {
       <div className="list-header">
         <div className="header-icon">🆘</div>
         <h2>בקשות <span>עזרה</span></h2>
-        {!loading && (
-          <span className="count-badge">{displayRequests.length} בקשות</span>
-        )}
+        <div className="header-right">
+          {isAdmin && (
+            <Suspense fallback={null}>
+              <AddHelpRequest onSuccess={onRefreshRequests} />
+            </Suspense>
+          )}
+          {!loading && (
+            <span className="count-badge">{displayRequests.length} בקשות</span>
+          )}
+        </div>
       </div>
 
       <div className="search-container">

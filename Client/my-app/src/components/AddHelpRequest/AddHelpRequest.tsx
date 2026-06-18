@@ -84,7 +84,7 @@ const AddHelpRequest: FC<AddHelpRequestProps> = ({ onSuccess }) => {
 
       <div className="AddHelpRequest">
         <button onClick={() => setIsAdd(true)} className="open-form-btn">
-          <span className="open-form-btn__icon">+</span>
+          <span className="open-form-btn__icon">+</span> הוסף בקשה
         </button>
 
         {isAdd && (

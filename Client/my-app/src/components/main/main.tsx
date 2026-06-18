@@ -23,7 +23,7 @@ export default function Main() {
     return (
         <div>
             {/* הנייבר תמיד קיים למעלה ומקבל את פונקציית הרענון שלו */}
-            <Navbar onRefreshRequests={loadRequests} />
+            <Navbar />
             
             <div className="main-content">
                 {/* 🌟 אם המשתמש נמצא בדיוק בנתיב הראשי "/" או ב-"/login"/"/register" - נציג את הרשימה */}
@@ -31,6 +31,7 @@ export default function Main() {
                     <HelpRequestList 
                         requests={requests} 
                         onSelect={(r) => navigate(`/details/${r._id}`, { state: { request: r } })} 
+                        onRefreshRequests={loadRequests}
                     />
                 ) : (
                     <Outlet context={{ requests, loadRequests }} />

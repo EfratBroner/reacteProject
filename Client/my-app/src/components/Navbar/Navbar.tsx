@@ -1,4 +1,4 @@
-import { useEffect, useState, lazy, Suspense, type FC } from 'react';
+import { useEffect, useState, type FC } from 'react';
 import './Navbar.scss';
 import Login from '../Login/Login';
 import type { Volunteer } from '../../models/volunteer.model';
@@ -11,13 +11,7 @@ import type { RootState, AppDispatch } from '../../main';
 import type { HelpRequest } from '../../models/helpRequest.model';
 import { setRequests } from '../../redux/slices/requestsSlice';
 
-const AddHelpRequest = lazy(() => import('../AddHelpRequest/AddHelpRequest'));
-
-interface NavbarProps {
-  onRefreshRequests: () => Promise<void>;
-}
-
-const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
+const Navbar: FC = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
@@ -182,13 +176,7 @@ const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
         <Register volunteer={null} onRegisterSuccess={handleRegisterSuccess} onNavigateToLogin={switchToLogin} onClose={handleCloseRegister} />
       )}
 
-      {volunteer?.role === 'admin' && (
-        <div className="admin-fab-wrapper">
-          <Suspense fallback={null}>
-            <AddHelpRequest onSuccess={onRefreshRequests} />
-          </Suspense>
-        </div>
-      )}
+
     </>
   );
 };

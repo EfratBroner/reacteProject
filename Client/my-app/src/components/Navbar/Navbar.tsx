@@ -99,7 +99,6 @@ const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
   const handleCloseLogin = () => { setShowLogin(false); navigate('/'); };
   const handleCloseRegister = () => { setShowRegister(false); navigate('/'); };
 
-  // תיקון חתימת הפונקציה: מקבלת אובייקט HelpRequest מלא
   const handleRequestCardClick = (req: HelpRequest) => {
     setShowMyRequests(false);
     navigate(`/details/${req._id}`, { state: { request: req } });
@@ -123,6 +122,40 @@ const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
           <span>ידידים - מערכת פנימית</span>
         </div>
 
+        {volunteer && (
+          <div className="navbar__center">
+            <span className="navbar__greeting">שלום, {volunteer.firstName}</span>
+            {myActiveRequests.length > 0 && (
+              <div
+                className="navbar__bell-container"
+                onMouseEnter={() => setShowMyRequests(true)}
+                onMouseLeave={() => setShowMyRequests(false)}
+              >
+                <button className={`navbar__btn navbar__btn--bell ${myActiveRequests.length > 0 ? 'is-ringing' : ''}`}>
+                  🔔
+                </button>
+                {showMyRequests && (
+                  <div className="navbar__requests-dropdown" style={{ position: 'absolute', top: '100%', left: 0, backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '6px', padding: '10px', width: '240px', zIndex: 1000, boxShadow: '0px 4px 8px rgba(0,0,0,0.1)', direction: 'rtl' }}>
+                    <h4 style={{ margin: '0 0 8px 0', fontSize: '0.9rem', borderBottom: '1px solid #eee', paddingBottom: '4px' }}>בקשות שבטיפולך כעת:</h4>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {myActiveRequests.map((req: HelpRequest) => (
+                        <div
+                          key={req._id}
+                          onClick={() => handleRequestCardClick(req)}
+                          style={{ backgroundColor: '#f9f9f9', border: '1px solid #ddd', borderRadius: '4px', padding: '6px 8px', cursor: 'pointer', textAlign: 'right', fontSize: '0.8rem' }}>
+                          <div>📍 <strong>מיקום:</strong> {req.location.city}</div>
+                          <div>📞 <strong>טלפון:</strong> {req.phone}</div>
+                          <div>⚠️ <strong>דחיפות:</strong> {req.priority}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="navbar__actions">
           {!volunteer ? (
             <>
@@ -135,51 +168,8 @@ const Navbar: FC<NavbarProps> = ({ onRefreshRequests }) => {
             </>
           ) : (
             <>
-              {myActiveRequests.length > 0 && (
-                <div
-                  className="navbar__bell-container"
-                  onMouseEnter={() => setShowMyRequests(true)}
-                  onMouseLeave={() => setShowMyRequests(false)}
-                  style={{ position: 'relative', display: 'inline-block', marginLeft: '15px' }}
-                >
-                  <button
-                    className={`navbar__btn navbar__btn--bell ${myActiveRequests.length > 0 ? 'is-ringing' : ''}`}
-                    style={{ background: 'none', border: 'none', fontSize: '1.4rem', cursor: 'pointer', position: 'relative' }}
-                  >
-                    🔔
-                  </button>
-                  {showMyRequests && (
-                    <div className="navbar__requests-dropdown" style={{ position: 'absolute', top: '100%', left: 0, backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '6px', padding: '10px', width: '240px', zIndex: 1000, boxShadow: '0px 4px 8px rgba(0,0,0,0.1)', direction: 'rtl' }}>
-                      <h4 style={{ margin: '0 0 8px 0', fontSize: '0.9rem', borderBottom: '1px solid #eee', paddingBottom: '4px' }}>בקשות שבטיפולך כעת:</h4>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        {myActiveRequests.map((req: HelpRequest) => (
-                          <div
-                            key={req._id}
-                            onClick={() => handleRequestCardClick(req)}
-                            style={{ backgroundColor: '#f9f9f9', border: '1px solid #ddd', borderRadius: '4px', padding: '6px 8px', cursor: 'pointer', textAlign: 'right', fontSize: '0.8rem' }}>
-                            <div>📍 <strong>מיקום:</strong> {req.location.city}</div>
-                            <div>📞 <strong>טלפון:</strong> {req.phone}</div>
-                            <div>⚠️ <strong>דחיפות:</strong> {req.priority}</div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <span className="navbar__greeting">שלום, {volunteer.firstName}! 👋</span>
-              <button
-                className="navbar__btn navbar__btn--outline"
-                onClick={() => navigate('/profile')} >
-
-                הפרופיל שלי
-              </button>
-              <button
-                className="navbar__btn navbar__btn--danger"
-                onClick={() => dispatch(clearVolunteer())}>
-                התנתק
-              </button>
+              <button className="navbar__btn navbar__btn--outline" onClick={() => navigate('/profile')}>הפרופיל שלי</button>
+              <button className="navbar__btn navbar__btn--danger" onClick={() => dispatch(clearVolunteer())}>התנתק</button>
             </>
           )}
         </div>
